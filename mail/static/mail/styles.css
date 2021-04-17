@@ -1,0 +1,18 @@
+textarea {
+  min-height: 400px;
+}
+.email {
+  border: 1px solid black;
+  padding: 1.5rem 0 1.5rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.email div {
+  display: inline-block;
+  margin-right: 2rem;
+}
+
+.email:last-child {
+  margin-right: 0;
+}
