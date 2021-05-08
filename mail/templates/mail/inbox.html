@@ -1,37 +1,59 @@
-{% extends "mail/layout.html" %}
-{% load static %}
+{% extends "mail/layout.html" %} {% load static %} {% block body %}
+<h2>{{ request.user.email }}</h2>
 
-{% block body %}
-    <h2>{{ request.user.email }}</h2>
+<button class="btn btn-sm btn-outline-primary" id="inbox">Inbox</button>
+<button class="btn btn-sm btn-outline-primary" id="compose">Compose</button>
+<button class="btn btn-sm btn-outline-primary" id="sent">Sent</button>
+<button class="btn btn-sm btn-outline-primary" id="archived">Archived</button>
+<a class="btn btn-sm btn-outline-primary" href="{% url 'logout' %}">Log Out</a>
+<hr />
 
-    <button class="btn btn-sm btn-outline-primary" id="inbox">Inbox</button>
-    <button class="btn btn-sm btn-outline-primary" id="compose">Compose</button>
-    <button class="btn btn-sm btn-outline-primary" id="sent">Sent</button>
-    <button class="btn btn-sm btn-outline-primary" id="archived">Archived</button>
-    <a class="btn btn-sm btn-outline-primary" href="{% url 'logout' %}">Log Out</a>
-    <hr>
+<div id="emails-view"></div>
+<div id="detail-view">
+  <h3 class="mb-3">Email</h3>
+  <dl class="row">
+    <dt class="col-sm-3">Sender</dt>
+    <dl class="col-sm-9" id="email-sender"></dl>
 
-    <div id="emails-view">
+    <dt class="col-sm-3">Recipients</dt>
+    <dl class="col-sm-9">
+      <ul class="list-unstyled mb-0" id="recipients-list">
+      </ul>
+    </dl>
+
+    <dt class="col-sm-3" >Subject</dt>
+    <dl class="col-sm-9" id="email-subject"></dl>
+
+    <dt class="col-sm-3" >Timestamp</dt>
+    <dl class="col-sm-9" id="email-timestamp"></dl>
+  </dl>
+  <hr />
+  <p id="email-body"></p>
+  <hr />
+  <div class="d-flex justify-content-between" id="email-archive-btn-container"></div>
+</div>
+
+<div id="compose-view">
+  <h3>New Email</h3>
+  <form id="compose-form">
+    <div class="form-group">
+      From:
+      <input disabled class="form-control" value="{{ request.user.email }}" />
     </div>
-
-    <div id="compose-view">
-        <h3>New Email</h3>
-        <form id="compose-form">
-            <div class="form-group">
-                From: <input disabled class="form-control" value="{{ request.user.email }}">
-            </div>
-            <div class="form-group">
-                To: <input id="compose-recipients" class="form-control">
-            </div>
-            <div class="form-group">
-                <input class="form-control" id="compose-subject" placeholder="Subject">
-            </div>
-            <textarea class="form-control" id="compose-body" placeholder="Body"></textarea>
-            <input type="submit" class="btn btn-primary"/>
-        </form>
+    <div class="form-group">
+      To: <input id="compose-recipients" class="form-control" />
     </div>
-{% endblock %}
-
-{% block script %}
-    <script src="{% static 'mail/inbox.js' %}"></script>
+    <div class="form-group">
+      <input class="form-control" id="compose-subject" placeholder="Subject" />
+    </div>
+    <textarea
+      class="form-control"
+      id="compose-body"
+      placeholder="Body"
+    ></textarea>
+    <input type="submit" class="btn btn-primary" />
+  </form>
+</div>
+{% endblock %} {% block script %}
+<script src="{% static 'mail/inbox.js' %}"></script>
 {% endblock %}
