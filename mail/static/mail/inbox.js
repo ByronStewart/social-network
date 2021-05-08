@@ -99,6 +99,7 @@ async function load_mailbox(mailbox) {
 function createEmailCard({ sender, subject, timestamp, read, id }) {
   const card = document.createElement("div");
   card.classList.add("card", "mb-3");
+  card.style.cursor = "pointer"
   card.addEventListener("click", async () => {
     const response = await fetch(`/emails/${id}`, {
       method: "PUT",
