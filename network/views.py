@@ -1,14 +1,39 @@
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+from django.views import generic
 
-from .models import User
+from .models import Post, User
 
 
-def index(request):
-    return render(request, "network/index.html")
+class AllPostsView(generic.ListView):
+    model = Post
+    def get_queryset(self):
+        return Post.objects.all().order_by("-created_at")
+
+    template_name = "network/index.html"
+
+
+class AllUserPostsView(generic.ListView):
+    model = Post
+    def get_queryset(self):
+        user_id = self.kwargs.get("pk")
+        return Post.objects.filter(creator_id=user_id)
+
+    template_name = "network/index.html"
+
+
+class CreatePostView(LoginRequiredMixin , generic.CreateView):
+    model = Post
+    fields = ['content']
+    success_url = "/"
+
+    def form_valid(self, form) -> HttpResponse:
+        form.instance.creator = self.request.user
+        return super().form_valid(form)
 
 
 def login_view(request):
