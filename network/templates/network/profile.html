@@ -7,10 +7,24 @@
 <section class="container">
   <h1>The profile page</h1>
 
+  <div class="row text-center p-5 bg-dark text-white">
+    <div class="col">
+      <h3>
+        {{user.username}}
+      </h3>
+    </div>
+    <div class="col">
+      <h3>
+        {{user.email}}
+      </h3>
+    </div>
+  </div>
+
   {% if user.is_authenticated %}
   {% comment %} 
     add the ability to follow and unfollow the person if logged in
   {% endcomment %}
+    
   {% endif %}
 </section>
 

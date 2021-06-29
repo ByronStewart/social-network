@@ -1,4 +1,6 @@
-{% extends "network/layout.html" %} {% block body %}
+{% extends "network/layout.html" %}
+{% load static %}
+{% block body %}
 {% if user.is_authenticated %}
 <form class="mb-5" action="api/posts" method="post">
   {% csrf_token %}
@@ -8,5 +10,11 @@
   </div>
   <button type="submit" class="btn btn-outline-info">Create Post</button>
 </form>
+<section class="container p-5 bg-light" id="post-list">
+</section>
 {% endif %}
-{% endblock %}
+{% endblock body %}
+
+{% block scripts %}
+  <script src={% static 'network/js/index.js' %}></script>
+{% endblock scripts %}

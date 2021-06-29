@@ -3,7 +3,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.http.response import JsonResponse
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.views import generic
 
@@ -18,7 +18,9 @@ def index(request):
 
 # TODO
 def allPosts(request):
-    return JsonResponse()
+    posts = Post.objects.all()
+    posts.order_by("-created_at")
+    return JsonResponse([post.serialize() for post in posts], safe=False)
 
 # TODO
 def editPost(request, pk):
@@ -32,13 +34,15 @@ def createPost(request):
 def deletePost(request, pk):
     return JsonResponse()
 
-# TODO
+
 def profile(request, pk):
     """ 
         Will return the profile information for the pk of the user
     """
-    print(pk)
-    return render(request, "network/profile.html")
+    user = get_object_or_404(User, pk=pk)
+    # TODO check if the current user has followed the profile
+
+    return render(request, "network/profile.html", {"user": user})
 
 # TODO
 def following(request):

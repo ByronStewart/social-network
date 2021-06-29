@@ -12,4 +12,12 @@ class Post(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     liked_by_set = models.ManyToManyField(User, related_name="liked_posts_set", blank=True)
 
+    def serialize(self):
+        return {
+            'id': self.id,
+            'creator': self.creator.username,
+            'content': self.content,
+            'created_at': self.created_at,
+        }
+
 
