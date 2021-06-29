@@ -1,0 +1,20 @@
+{% extends "network/layout.html" %}
+
+{% block body %}
+
+{% comment %} The profile section of the page {% endcomment %}
+
+<section class="container">
+  <h1>Posts by people you are following</h1>
+
+  {% if user.is_authenticated %}
+  {% comment %} 
+    add the ability to follow and unfollow the person if logged in
+  {% endcomment %}
+  {% endif %}
+</section>
+
+{% comment %} 
+  the posts of the user, will be rendered with js
+{% endcomment %}
+{% endblock %}

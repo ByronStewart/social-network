@@ -2,6 +2,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
+from django.http.response import JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 from django.views import generic
@@ -9,32 +10,40 @@ from django.views import generic
 from .models import Post, User
 
 
-class AllPostsView(generic.ListView):
-    model = Post
-    def get_queryset(self):
-        return Post.objects.all().order_by("-created_at")
+def index(request):
+    """ 
+        Will return a page with a form to create a new post
+    """
+    return render(request, "network/index.html")
 
-    template_name = "network/index.html"
+# TODO
+def allPosts(request):
+    return JsonResponse()
 
+# TODO
+def editPost(request, pk):
+    return JsonResponse()
+    
+# TODO
+def createPost(request):
+    return JsonResponse()
 
-class AllUserPostsView(generic.ListView):
-    model = Post
-    def get_queryset(self):
-        user_id = self.kwargs.get("pk")
-        return Post.objects.filter(creator_id=user_id)
+# TODO
+def deletePost(request, pk):
+    return JsonResponse()
 
-    template_name = "network/index.html"
+# TODO
+def profile(request, pk):
+    """ 
+        Will return the profile information for the pk of the user
+    """
+    print(pk)
+    return render(request, "network/profile.html")
 
-
-class CreatePostView(LoginRequiredMixin , generic.CreateView):
-    model = Post
-    fields = ['content']
-    success_url = "/"
-
-    def form_valid(self, form) -> HttpResponse:
-        form.instance.creator = self.request.user
-        return super().form_valid(form)
-
+# TODO
+def following(request):
+    """ Generic page with just filtered posts for the user"""
+    return render(request, "network/following.html")
 
 def login_view(request):
     if request.method == "POST":

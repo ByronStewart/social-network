@@ -9,19 +9,4 @@
   <button type="submit" class="btn btn-outline-info">Create Post</button>
 </form>
 {% endif %}
-
-{% for post in object_list %}
-<div class="row">
-  <div class="col mb-3">
-    <div class="card">
-        <div class="card-header h5">
-            {{post.creator}} posted
-        </div>
-        <div class="card-body">
-            <p class="card-text">{{post.content}}</p>
-            <p class="text-muted">{{post.created_at}}</p>
-        </div>
-    </div>
-  </div>
-</div>
-{% endfor %} {% endblock %}
+{% endblock %}
