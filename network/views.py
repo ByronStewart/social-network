@@ -1,3 +1,4 @@
+import json
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import IntegrityError
@@ -5,7 +6,9 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.http.response import JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
-from django.views import generic
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
+
 
 from .models import Post, User
 
@@ -16,10 +19,16 @@ def index(request):
     """
     return render(request, "network/index.html")
 
-# TODO
+# TODO pagination
 def allPosts(request):
     posts = Post.objects.all()
-    posts.order_by("-created_at")
+    posts = posts.order_by("-created_at").all()
+    return JsonResponse([post.serialize() for post in posts], safe=False)
+
+# TODO pagination
+def postsByUser(request, user_id):
+    posts = Post.objects.all()
+    posts = posts.order_by("-created_at").all()
     return JsonResponse([post.serialize() for post in posts], safe=False)
 
 # TODO
@@ -27,8 +36,26 @@ def editPost(request, pk):
     return JsonResponse()
     
 # TODO
+@csrf_exempt
+@login_required
 def createPost(request):
-    return JsonResponse()
+    
+    # Creating a new post must be via POST
+    if request.method != "POST":
+        return JsonResponse({"error": "POST request required."}, status=400)
+
+    data = json.loads(request.body)
+    content = data["content"]
+
+    if content == None or content.strip() == "":
+        return JsonResponse({"error": "post must contain a body"}, status=400)
+
+    # save the new post in the database
+    post = Post(creator=request.user, content=content)
+    success = post.save()
+    print(success)
+
+    return JsonResponse({"message": "thankyou"})
 
 # TODO
 def deletePost(request, pk):

@@ -2,16 +2,14 @@
 {% load static %}
 {% block body %}
 {% if user.is_authenticated %}
-<form class="mb-5" action="api/posts" method="post">
+<form class="mb-5" action="api/posts/new" method="post" id="create-new-post-form">
   {% csrf_token %}
   <div class="mb-3">
     <label for="content" class="form-label">New Post:</label>
-    <input type="text" class="form-control" name="content" />
+    <input type="text" class="form-control" name="content" id="post-content"/>
   </div>
   <button type="submit" class="btn btn-outline-info">Create Post</button>
 </form>
-<section class="container p-5 bg-light" id="post-list">
-</section>
 {% endif %}
 {% endblock body %}
 

@@ -16,8 +16,9 @@ class Post(models.Model):
         return {
             'id': self.id,
             'creator': self.creator.username,
+            'creator_id': self.creator.pk,
             'content': self.content,
-            'created_at': self.created_at,
+            'created_at': self.created_at.strftime("%b %d %Y, %I:%M %p"),
         }
 
 
