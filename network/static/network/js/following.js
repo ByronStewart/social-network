@@ -8,14 +8,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-console.log('hello from profile');
-function getAllUserPosts() {
+function getAllFollowingPosts() {
     return __awaiter(this, void 0, void 0, function* () {
         console.log("fetching posts");
-        const url = window.location.href;
         // get the user id from the url
-        const userId = url.split("/").slice(-1).pop();
-        const response = yield fetch(`/api/posts/${userId}`);
+        const response = yield fetch(`/api/posts/following/${userId}`);
         posts = (yield response.json());
         const postContainer = document.querySelector("#post-list");
         postContainer.innerHTML = "";

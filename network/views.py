@@ -27,9 +27,17 @@ def allPosts(request):
 
 # TODO pagination
 def postsByUser(request, user_id):
-    posts = Post.objects.all()
+    posts = Post.objects.filter(creator=user_id)
     posts = posts.order_by("-created_at").all()
     return JsonResponse([post.serialize() for post in posts], safe=False)
+
+@login_required
+def postsFollowing(request):
+    users_following = request.user.following_set.all()
+    posts = Post.objects.filter(creator__in=users_following)
+    posts = posts.order_by("-created_at").all()
+    return JsonResponse([post.serialize() for post in posts], safe=False)
+
 
 # TODO
 def editPost(request, pk):
@@ -52,9 +60,9 @@ def createPost(request):
 
     # save the new post in the database
     post = Post(creator=request.user, content=content)
-    success = post.save()
-    print(success)
+    post.save()
 
+    # TODO make a better response
     return JsonResponse({"message": "thankyou"})
 
 # TODO
@@ -72,6 +80,7 @@ def profile(request, pk):
     return render(request, "network/profile.html", {"user": user})
 
 # TODO
+@login_required
 def following(request):
     """ Generic page with just filtered posts for the user"""
     return render(request, "network/following.html")

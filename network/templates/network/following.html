@@ -1,4 +1,5 @@
 {% extends "network/layout.html" %}
+{% load static %}
 
 {% block body %}
 
@@ -18,3 +19,6 @@
   the posts of the user, will be rendered with js
 {% endcomment %}
 {% endblock %}
+{% block scripts %}
+<script src="{% static 'network/js/following.js' %}"></script>
+{% endblock scripts %}

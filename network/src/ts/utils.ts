@@ -7,6 +7,8 @@ type PostDTO = {
 }
 
 var posts: PostDTO[] = []
+var userIdDiv = <HTMLDivElement>document.querySelector("#user")
+var userId = userIdDiv.textContent ? parseInt(userIdDiv.textContent) : null
 
 function createPostElement(post: PostDTO): HTMLDivElement {
   const wrapper = document.createElement("div")

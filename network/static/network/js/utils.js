@@ -1,5 +1,7 @@
 "use strict";
 var posts = [];
+var userIdDiv = document.querySelector("#user");
+var userId = userIdDiv.textContent ? parseInt(userIdDiv.textContent) : null;
 function createPostElement(post) {
     const wrapper = document.createElement("div");
     wrapper.classList.add("mb-3", "row", "p-5", "bg-dark", "text-white");
