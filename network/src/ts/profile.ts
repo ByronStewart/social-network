@@ -1,6 +1,7 @@
 console.log('hello from profile')
 
 const followBtn = document.querySelector("#follow-btn")
+const followerCount = document.querySelector("#follower-count")
 
 followBtn?.addEventListener("click", async e => {
   const status = followBtn.getAttribute("data-follow-status") == "true" ? true : false
@@ -17,6 +18,9 @@ followBtn?.addEventListener("click", async e => {
   if (response.ok) {
     followBtn.textContent = status ? "Follow" : "Unfollow"
     followBtn.setAttribute("data-follow-status", !status ? "true" : "false")
+    
+    const followerCountElt = <HTMLSpanElement>document.querySelector("#follower-count")!
+    followerCountElt.textContent = data.follower_count
   }
   console.log(data)
 })
@@ -34,7 +38,6 @@ async function getAllUserPosts() {
     postContainer.appendChild(createPostElement(post))  
   }
 }
-
 
 
 getAllUserPosts()

@@ -13,27 +13,24 @@
       <h3>
         {{profile.username}}
       </h3>
+      <p class="lead">
+        {{profile.email}}
+      </p>
     </div>
     <div class="col">
-      <h3>
-        {{profile.email}}
-      </h3>
+      <p>number of followers: <span id="follower-count">{{number_of_followers}}</span></p>
+      <p>number of people followed: <span>{{number_of_people_following}}</span></p>
     </div>
   </div>
 
   {% if user.is_authenticated %}
-
-  {% if user != profile %}
-    {% if is_followed %}
-    <button id="follow-btn" data-follow-status="true">Unfollow</button>
+    {% if user != profile %}
+      {% if is_followed %}
+        <button id="follow-btn" data-follow-status="true">Unfollow</button>
       {% else %}
-    <button id="follow-btn" data-follow-status="false">Follow</button>
+        <button id="follow-btn" data-follow-status="false">Follow</button>
+      {% endif %}
     {% endif %}
-  {% endif %}
-  {% comment %} 
-    add the ability to follow and unfollow the person if logged in
-  {% endcomment %}
-    
   {% endif %}
 </section>
 

@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 console.log('hello from profile');
 const followBtn = document.querySelector("#follow-btn");
+const followerCount = document.querySelector("#follower-count");
 followBtn === null || followBtn === void 0 ? void 0 : followBtn.addEventListener("click", (e) => __awaiter(void 0, void 0, void 0, function* () {
     const status = followBtn.getAttribute("data-follow-status") == "true" ? true : false;
     const profileId = window.location.href.split("/").slice(-1).pop();
@@ -24,6 +25,8 @@ followBtn === null || followBtn === void 0 ? void 0 : followBtn.addEventListener
     if (response.ok) {
         followBtn.textContent = status ? "Follow" : "Unfollow";
         followBtn.setAttribute("data-follow-status", !status ? "true" : "false");
+        const followerCountElt = document.querySelector("#follower-count");
+        followerCountElt.textContent = data.follower_count;
     }
     console.log(data);
 }));
