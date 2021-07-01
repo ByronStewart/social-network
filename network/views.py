@@ -97,15 +97,7 @@ def profile(request, pk):
         Will return the profile information for the pk of the user
     """
     profile = get_object_or_404(User, pk=pk)
-
-    userId = request.user.pk
-    print(userId)
-
     isFollowed = request.user.following_set.filter(pk=pk).exists()
-    print(isFollowed)
-
-    # TODO check if the current user has followed the profile
-
     return render(request, "network/profile.html", {"profile": profile, "is_followed": isFollowed})
 
 # TODO

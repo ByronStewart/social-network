@@ -12,7 +12,7 @@ function getAllFollowingPosts() {
     return __awaiter(this, void 0, void 0, function* () {
         console.log("fetching posts");
         // get the user id from the url
-        const response = yield fetch(`/api/posts/following/${userId}`);
+        const response = yield fetch(`/api/posts/following`);
         posts = (yield response.json());
         const postContainer = document.querySelector("#post-list");
         postContainer.innerHTML = "";
@@ -21,4 +21,4 @@ function getAllFollowingPosts() {
         }
     });
 }
-getAllUserPosts();
+getAllFollowingPosts();
