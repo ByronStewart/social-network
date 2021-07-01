@@ -58,6 +58,7 @@ def toggleFollow(request):
             request.user.following_set.remove(userToFollow)
 
         request.user.save()
+
         return JsonResponse({"message": "success"})
 
 # TODO
@@ -97,8 +98,10 @@ def profile(request, pk):
     """
     profile = get_object_or_404(User, pk=pk)
 
-    isFollowed = request.user.following_set.filter(pk=request.user.pk).exists()
+    userId = request.user.pk
+    print(userId)
 
+    isFollowed = request.user.following_set.filter(pk=pk).exists()
     print(isFollowed)
 
     # TODO check if the current user has followed the profile

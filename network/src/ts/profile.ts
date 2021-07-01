@@ -14,6 +14,10 @@ followBtn?.addEventListener("click", async e => {
     })
   })
   const data = await response.json()
+  if (response.ok) {
+    followBtn.textContent = status ? "Follow" : "Unfollow"
+    followBtn.setAttribute("data-follow-status", !status ? "true" : "false")
+  }
   console.log(data)
 })
 

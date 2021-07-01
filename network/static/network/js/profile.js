@@ -21,6 +21,10 @@ followBtn === null || followBtn === void 0 ? void 0 : followBtn.addEventListener
         })
     });
     const data = yield response.json();
+    if (response.ok) {
+        followBtn.textContent = status ? "Follow" : "Unfollow";
+        followBtn.setAttribute("data-follow-status", !status ? "true" : "false");
+    }
     console.log(data);
 }));
 function getAllUserPosts() {
