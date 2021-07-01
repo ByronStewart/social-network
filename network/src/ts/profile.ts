@@ -1,6 +1,21 @@
 console.log('hello from profile')
 
+const followBtn = document.querySelector("#follow-btn")
 
+followBtn?.addEventListener("click", async e => {
+  const status = followBtn.getAttribute("data-follow-status") == "true" ? true : false
+  const profileId = window.location.href.split("/").slice(-1).pop()
+  
+  const response = await fetch("../api/user/follow", {
+    method: "POST",
+    body: JSON.stringify({
+      profileId,
+      wantsToFollow : status ? false : true
+    })
+  })
+  const data = await response.json()
+  console.log(data)
+})
 
 async function getAllUserPosts() {
   console.log("fetching posts")
@@ -15,6 +30,7 @@ async function getAllUserPosts() {
     postContainer.appendChild(createPostElement(post))  
   }
 }
+
 
 
 getAllUserPosts()

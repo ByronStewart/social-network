@@ -9,6 +9,20 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 console.log('hello from profile');
+const followBtn = document.querySelector("#follow-btn");
+followBtn === null || followBtn === void 0 ? void 0 : followBtn.addEventListener("click", (e) => __awaiter(void 0, void 0, void 0, function* () {
+    const status = followBtn.getAttribute("data-follow-status") == "true" ? true : false;
+    const profileId = window.location.href.split("/").slice(-1).pop();
+    const response = yield fetch("../api/user/follow", {
+        method: "POST",
+        body: JSON.stringify({
+            profileId,
+            wantsToFollow: status ? false : true
+        })
+    });
+    const data = yield response.json();
+    console.log(data);
+}));
 function getAllUserPosts() {
     return __awaiter(this, void 0, void 0, function* () {
         console.log("fetching posts");

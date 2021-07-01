@@ -38,6 +38,27 @@ def postsFollowing(request):
     posts = posts.order_by("-created_at").all()
     return JsonResponse([post.serialize() for post in posts], safe=False)
 
+@csrf_exempt
+@login_required
+def toggleFollow(request):
+    if request.method != "POST":
+        return JsonResponse({"error": "must be a post request"}, status=400)
+    
+    data = json.loads(request.body)
+    wantsToFollow = data["wantsToFollow"]
+    userToFollowId = data["profileId"]
+
+    if type(wantsToFollow) != bool:
+        return JsonResponse({"error": "post must contain a parameter wantsToFollow"}, status=400)
+    else:
+        userToFollow = User.objects.get(pk=userToFollowId)
+        if wantsToFollow:
+            request.user.following_set.add(userToFollow)
+        else:
+            request.user.following_set.remove(userToFollow)
+
+        request.user.save()
+        return JsonResponse({"message": "success"})
 
 # TODO
 def editPost(request, pk):
@@ -74,10 +95,15 @@ def profile(request, pk):
     """ 
         Will return the profile information for the pk of the user
     """
-    user = get_object_or_404(User, pk=pk)
+    profile = get_object_or_404(User, pk=pk)
+
+    isFollowed = request.user.following_set.filter(pk=request.user.pk).exists()
+
+    print(isFollowed)
+
     # TODO check if the current user has followed the profile
 
-    return render(request, "network/profile.html", {"user": user})
+    return render(request, "network/profile.html", {"profile": profile, "is_followed": isFollowed})
 
 # TODO
 @login_required

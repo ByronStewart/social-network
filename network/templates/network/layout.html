@@ -48,12 +48,12 @@
 {% comment %} POSTS CONTAINER {% endcomment %}
 <section class="container p-5 bg-light" id="post-list">
 </section>
+        {% comment %} this is dodgy but I cbf figuring out how to get the user from the session in js {% endcomment %}
+            <div style="display: none;" id="user">{{user.pk}}</div>
         <script src="{% static "network/js/utils.js"%}"></script>
         {% block scripts %}
         {% endblock scripts %}
         {% if user.is_authenticated %}
-        {% comment %} this is dodgy but I cbf figuring out how to get the user from the session in js {% endcomment %}
-            <div style="display: none;" id="user">{{user.pk}}</div>
         {% endif %}
     </body>
 </html>
