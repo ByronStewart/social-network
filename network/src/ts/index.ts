@@ -1,7 +1,7 @@
 
-const createNewPostForm = <HTMLFormElement>document.querySelector("#create-new-post-form")!
+const createNewPostForm = <HTMLFormElement>document.querySelector("#create-new-post-form")
 
-createNewPostForm.addEventListener("submit", async e => {
+createNewPostForm?.addEventListener("submit", async e => {
   e.preventDefault()
   const contentElement = <HTMLInputElement>document.querySelector("#post-content")!
   const content = contentElement.value

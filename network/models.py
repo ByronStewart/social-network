@@ -26,4 +26,5 @@ class Post(models.Model):
             'creator_id': self.creator.pk,
             'content': self.content,
             'created_at': self.created_at.strftime("%b %d %Y, %I:%M %p"),
+            'likes': self.liked_by_set.count()
         }

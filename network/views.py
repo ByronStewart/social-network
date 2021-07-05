@@ -21,11 +21,42 @@ def index(request):
 
 # TODO pagination
 
+@csrf_exempt
+@login_required
+def likePost(request, pk):
+    if request.method != "POST":
+        return JsonResponse({"error": "must be a post request"}, status=400)
+    
+    data = json.loads(request.body)
+    toLike = data["toLike"]
+
+    if type(toLike) != bool:
+        return JsonResponse({"error": "post must contain a parameter wantsToFollow"}, status=400)
+
+    post = get_object_or_404(Post, pk=pk)
+
+    if toLike:
+        post.liked_by_set.add(request.user)
+    else:
+        post.liked_by_set.remove(request.user)
+    
+    post = post.serialize()
+    post["isLiked"] = toLike
+    return JsonResponse(post)
 
 def allPosts(request):
     posts = Post.objects.all()
     posts = posts.order_by("-created_at").all()
-    return JsonResponse([post.serialize() for post in posts], safe=False)
+    res = []
+    for post in posts:
+        if request.user.is_authenticated:
+            isLiked = request.user.liked_posts_set.filter(id=post.id).exists()
+        else:
+            isLiked = None
+        p = post.serialize()
+        p["isLiked"] = isLiked
+        res.append(p)
+    return JsonResponse(res, safe=False)
 
 # TODO pagination
 
@@ -33,7 +64,16 @@ def allPosts(request):
 def postsByUser(request, user_id):
     posts = Post.objects.filter(creator=user_id)
     posts = posts.order_by("-created_at").all()
-    return JsonResponse([post.serialize() for post in posts], safe=False)
+    res = []
+    for post in posts:
+        if request.user.is_authenticated:
+            isLiked = request.user.liked_posts_set.filter(id=post.id).exists()
+        else:
+            isLiked = None
+        p = post.serialize()
+        p["isLiked"] = isLiked
+        res.append(p)
+    return JsonResponse(res, safe=False)
 
 
 @login_required
@@ -41,7 +81,16 @@ def postsFollowing(request):
     users_following = request.user.following_set.all()
     posts = Post.objects.filter(creator__in=users_following)
     posts = posts.order_by("-created_at").all()
-    return JsonResponse([post.serialize() for post in posts], safe=False)
+    res = []
+    for post in posts:
+        if request.user.is_authenticated:
+            isLiked = request.user.liked_posts_set.filter(id=post.id).exists()
+        else:
+            isLiked = None
+        p = post.serialize()
+        p["isLiked"] = isLiked
+        res.append(p)
+    return JsonResponse(res, safe=False)
 
 
 @csrf_exempt
@@ -86,7 +135,7 @@ def editPost(request, pk):
     postToEdit.content = content
     postToEdit.save()
 
-    return JsonResponse({"message": "success", "content": content})
+    return JsonResponse({"message": "success", "post": postToEdit.serialize()})
 
 # TODO
 

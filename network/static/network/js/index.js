@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 const createNewPostForm = document.querySelector("#create-new-post-form");
-createNewPostForm.addEventListener("submit", (e) => __awaiter(void 0, void 0, void 0, function* () {
+createNewPostForm === null || createNewPostForm === void 0 ? void 0 : createNewPostForm.addEventListener("submit", (e) => __awaiter(void 0, void 0, void 0, function* () {
     e.preventDefault();
     const contentElement = document.querySelector("#post-content");
     const content = contentElement.value;
