@@ -5,7 +5,7 @@ from django.http.request import HttpRequest
 def paginated_posts(posts: BaseManager, offset: int, request: HttpRequest):
     count = len(posts)
     beginning = offset * 10
-    end = offset * 11
+    end = offset * 10 + 10
     posts = posts[beginning: end]
     return {
         "count": count,

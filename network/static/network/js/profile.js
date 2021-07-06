@@ -30,16 +30,26 @@ followBtn === null || followBtn === void 0 ? void 0 : followBtn.addEventListener
     }
     console.log(data);
 }));
-function getAllUserPosts() {
+var nextPageButton = document.querySelector("#next-page-btn");
+var prevPageButton = document.querySelector("#prev-page-btn");
+nextPageButton === null || nextPageButton === void 0 ? void 0 : nextPageButton.addEventListener("click", () => {
+    ++offset;
+    getAllUserPosts(offset);
+});
+prevPageButton === null || prevPageButton === void 0 ? void 0 : prevPageButton.addEventListener("click", () => {
+    offset = offset < 1 ? 0 : --offset;
+    getAllUserPosts(offset);
+});
+function getAllUserPosts(offset) {
     return __awaiter(this, void 0, void 0, function* () {
         console.log("fetching posts");
         const url = window.location.href;
         // get the user id from the url
         const userId = url.split("/").slice(-1).pop();
-        const response = yield fetch(`/api/posts/${userId}`);
+        const response = yield fetch(`/api/posts/${userId}?offset=${offset}`);
         posts = (yield response.json());
         const postContainer = document.querySelector("#post-list");
-        renderPosts(postContainer, posts, pageNum);
+        renderPosts(postContainer, posts.results);
     });
 }
-getAllUserPosts();
+getAllUserPosts(offset);

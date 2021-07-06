@@ -7,15 +7,25 @@ type PostDTO = {
   likes: number,
   is_liked: boolean | null
 }
+type PaginatedPosts = {
+  count: number,
+  next: number,
+  previous: number,
+  results: PostDTO[]
+}
 
-let pageNum = 1
-var posts: PostDTO[] = []
+var offset = 0
+var posts: PaginatedPosts = {
+  count: 0,
+  next: 1,
+  previous: 0,
+  results: []
+}
 var userIdDiv = <HTMLDivElement>document.querySelector("#user")
 var userId = userIdDiv.textContent ? parseInt(userIdDiv.textContent) : null
 
-function renderPosts(wrappingElement: HTMLDivElement, posts: PostDTO[], page: number) {
-  const numOfPosts = posts.length
-  const startingPost = page * 10 - 1
+
+function renderPosts(wrappingElement: HTMLDivElement, posts: PostDTO[]) {
   wrappingElement.innerHTML = ""
   for (let i = 0; i < posts.length; i++) {
     wrappingElement.appendChild(createPostElement(posts[i]))  

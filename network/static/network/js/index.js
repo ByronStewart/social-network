@@ -9,6 +9,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 const createNewPostForm = document.querySelector("#create-new-post-form");
+var nextPageButton = document.querySelector("#next-page-btn");
+var prevPageButton = document.querySelector("#prev-page-btn");
+nextPageButton === null || nextPageButton === void 0 ? void 0 : nextPageButton.addEventListener("click", () => {
+    ++offset;
+    getAllPosts(offset);
+});
+prevPageButton === null || prevPageButton === void 0 ? void 0 : prevPageButton.addEventListener("click", () => {
+    offset = offset < 1 ? 0 : --offset;
+    getAllPosts(offset);
+});
 createNewPostForm === null || createNewPostForm === void 0 ? void 0 : createNewPostForm.addEventListener("submit", (e) => __awaiter(void 0, void 0, void 0, function* () {
     e.preventDefault();
     const contentElement = document.querySelector("#post-content");
@@ -26,20 +36,20 @@ createNewPostForm === null || createNewPostForm === void 0 ? void 0 : createNewP
     const message = yield response.json();
     if (response.ok) {
         // reload the posts
-        yield getAllPosts();
+        yield getAllPosts(offset);
     }
     else {
         alert(message.error);
     }
 }));
-function getAllPosts() {
+function getAllPosts(offset) {
     return __awaiter(this, void 0, void 0, function* () {
         console.log("fetching posts");
-        const response = yield fetch("/api/posts");
+        const response = yield fetch(`/api/posts?offset=${offset}`);
         posts = (yield response.json());
         console.log(posts);
         const postContainer = document.querySelector("#post-list");
-        renderPosts(postContainer, posts, pageNum);
+        renderPosts(postContainer, posts.results);
     });
 }
-getAllPosts();
+getAllPosts(offset);

@@ -37,7 +37,7 @@ def allPosts(request: HttpRequest):
     posts = Post.objects.all()
     try:
         offset = request.GET['offset']
-        return JsonResponse(paginated_posts(posts, offset, request))
+        return JsonResponse(paginated_posts(posts, int(offset), request))
     except KeyError:
         return JsonResponse(paginated_posts(posts, 0 ,request))
 
@@ -46,7 +46,7 @@ def postsByUser(request: HttpRequest, user_id):
     posts = Post.objects.filter(creator=user_id)
     try:
         offset = request.GET['offset']
-        return JsonResponse(paginated_posts(posts, offset, request))
+        return JsonResponse(paginated_posts(posts, int(offset), request))
     except KeyError:
         return JsonResponse(paginated_posts(posts, 0 ,request))
 
@@ -57,7 +57,7 @@ def postsFollowing(request: HttpRequest):
     posts = Post.objects.filter(creator__in=users_following)
     try:
         offset = request.GET['offset']
-        return JsonResponse(paginated_posts(posts, offset, request))
+        return JsonResponse(paginated_posts(posts, int(offset), request))
     except KeyError:
         return JsonResponse(paginated_posts(posts, 0 ,request))
 

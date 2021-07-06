@@ -8,13 +8,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-let pageNum = 1;
-var posts = [];
+var offset = 0;
+var posts = {
+    count: 0,
+    next: 1,
+    previous: 0,
+    results: []
+};
 var userIdDiv = document.querySelector("#user");
 var userId = userIdDiv.textContent ? parseInt(userIdDiv.textContent) : null;
-function renderPosts(wrappingElement, posts, page) {
-    const numOfPosts = posts.length;
-    const startingPost = page * 10 - 1;
+function renderPosts(wrappingElement, posts) {
     wrappingElement.innerHTML = "";
     for (let i = 0; i < posts.length; i++) {
         wrappingElement.appendChild(createPostElement(posts[i]));

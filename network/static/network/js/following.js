@@ -8,14 +8,24 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-function getAllFollowingPosts() {
+var nextPageButton = document.querySelector("#next-page-btn");
+var prevPageButton = document.querySelector("#prev-page-btn");
+nextPageButton === null || nextPageButton === void 0 ? void 0 : nextPageButton.addEventListener("click", () => {
+    ++offset;
+    getAllFollowingPosts(offset);
+});
+prevPageButton === null || prevPageButton === void 0 ? void 0 : prevPageButton.addEventListener("click", () => {
+    offset = offset < 1 ? 0 : --offset;
+    getAllFollowingPosts(offset);
+});
+function getAllFollowingPosts(offset) {
     return __awaiter(this, void 0, void 0, function* () {
         console.log("fetching posts");
         // get the user id from the url
-        const response = yield fetch(`/api/posts/following`);
+        const response = yield fetch(`/api/posts/following?offset=${offset}`);
         posts = (yield response.json());
         const postContainer = document.querySelector("#post-list");
-        renderPosts(postContainer, posts, pageNum);
+        renderPosts(postContainer, posts.results);
     });
 }
-getAllFollowingPosts();
+getAllFollowingPosts(offset);

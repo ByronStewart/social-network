@@ -25,16 +25,29 @@ followBtn?.addEventListener("click", async e => {
   console.log(data)
 })
 
-async function getAllUserPosts() {
+var nextPageButton = <HTMLButtonElement>document.querySelector("#next-page-btn")
+var prevPageButton = <HTMLButtonElement>document.querySelector("#prev-page-btn")
+
+nextPageButton?.addEventListener("click", () => {
+  ++offset
+  getAllUserPosts(offset)
+})
+
+prevPageButton?.addEventListener("click", () => {
+  offset = offset < 1 ? 0 : --offset
+  getAllUserPosts(offset)
+})
+
+async function getAllUserPosts(offset: number) {
   console.log("fetching posts")
   const url = window.location.href
   // get the user id from the url
   const userId = url.split("/").slice(-1).pop()
-  const response = await fetch(`/api/posts/${userId}`)
-  posts = <PostDTO[]>await response.json()
+  const response = await fetch(`/api/posts/${userId}?offset=${offset}`)
+  posts = <PaginatedPosts>await response.json()
   const postContainer = document.querySelector<HTMLDivElement>("#post-list")!
-  renderPosts(postContainer, posts, pageNum)
+  renderPosts(postContainer, posts.results)
 }
 
 
-getAllUserPosts()
+getAllUserPosts(offset)

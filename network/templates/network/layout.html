@@ -48,6 +48,22 @@
 {% comment %} POSTS CONTAINER {% endcomment %}
 <section class="container p-5 bg-light" id="post-list">
 </section>
+{% comment %} Paginator {% endcomment %}
+<footer class="d-flex justify-content-center">
+    <ul class="pagination">
+        <li class="page-item">
+            <button class="page-link" id="prev-page-btn" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+            </button>
+        </li>
+        <li class="page-item">
+        <button class="page-link" id="next-page-btn" aria-label="Next">
+            <span aria-hidden="true">&raquo;</span>
+        </button>
+    </li>
+    </ul>
+</footer>
+
         {% comment %} this is dodgy but I cbf figuring out how to get the user from the session in js {% endcomment %}
             <div style="display: none;" id="user">{{user.pk}}</div>
         <script src="{% static "network/js/utils.js"%}"></script>
