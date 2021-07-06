@@ -2,19 +2,21 @@
 # TODO pagination
 
 import json
+from network.api.services import paginated_posts
 from network.models import Post, User
 from django.contrib.auth.decorators import login_required
 from django.http.response import JsonResponse
+from django.http import HttpRequest
 from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 
 
 @csrf_exempt
 @login_required
-def likePost(request, pk):
+def likePost(request: HttpRequest, pk):
     if request.method != "POST":
         return JsonResponse({"error": "must be a post request"}, status=400)
-    
+
     data = json.loads(request.body)
     toLike = data["toLike"]
 
@@ -30,26 +32,39 @@ def likePost(request, pk):
 
     return JsonResponse(post.serialize(request))
 
-def allPosts(request):
+
+def allPosts(request: HttpRequest):
     posts = Post.objects.all()
-    return JsonResponse([post.serialize(request) for post in posts], safe=False)
+    try:
+        offset = request.GET['offset']
+        return JsonResponse(paginated_posts(posts, offset, request))
+    except KeyError:
+        return JsonResponse(paginated_posts(posts, 0 ,request))
 
 
-def postsByUser(request, user_id):
+def postsByUser(request: HttpRequest, user_id):
     posts = Post.objects.filter(creator=user_id)
-    return JsonResponse([post.serialize(request) for post in posts], safe=False)
+    try:
+        offset = request.GET['offset']
+        return JsonResponse(paginated_posts(posts, offset, request))
+    except KeyError:
+        return JsonResponse(paginated_posts(posts, 0 ,request))
 
 
 @login_required
-def postsFollowing(request):
+def postsFollowing(request: HttpRequest):
     users_following = request.user.following_set.all()
     posts = Post.objects.filter(creator__in=users_following)
-    return JsonResponse([post.serialize(request) for post in posts], safe=False)
+    try:
+        offset = request.GET['offset']
+        return JsonResponse(paginated_posts(posts, offset, request))
+    except KeyError:
+        return JsonResponse(paginated_posts(posts, 0 ,request))
 
 
 @csrf_exempt
 @login_required
-def toggleFollow(request):
+def toggleFollow(request: HttpRequest):
     if request.method != "POST":
         return JsonResponse({"error": "must be a post request"}, status=400)
 
@@ -68,15 +83,14 @@ def toggleFollow(request):
 
         return JsonResponse({"message": "success", "follower_count": userToFollow.followed_by_set.count()})
 
-# TODO
 
 @csrf_exempt
 @login_required
-def editPost(request, pk):
+def editPost(request: HttpRequest, pk):
     if request.method != "POST":
         return JsonResponse({"error": "must be a post request"}, status=400)
 
-    data = json.loads(request.body)    
+    data = json.loads(request.body)
     content = data["content"]
 
     if content == None or content.strip() == "":
@@ -85,7 +99,7 @@ def editPost(request, pk):
     postToEdit = Post.objects.get(pk=pk)
     if postToEdit.creator != request.user:
         return JsonResponse({"error": "Post must be edited by the user who posted it"}, status=400)
-    
+
     postToEdit.content = content
     postToEdit.save()
 
@@ -94,7 +108,7 @@ def editPost(request, pk):
 
 @csrf_exempt
 @login_required
-def createPost(request):
+def createPost(request: HttpRequest):
 
     # Creating a new post must be via POST
     if request.method != "POST":
@@ -116,5 +130,5 @@ def createPost(request):
 # TODO
 
 
-def deletePost(request, pk):
+def deletePost(request: HttpRequest, pk):
     return JsonResponse()

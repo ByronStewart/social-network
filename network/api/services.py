@@ -1,14 +1,15 @@
-from typing import List
-from network.models import Post
+from django.db.models.manager import BaseManager
+from django.http.request import HttpRequest
 
-def paginated_posts(offset: int, request):
-    paginated_posts = Post.objects.all()
-    count = len(paginated_posts)
-    paginated_posts = paginated_posts[offset * 10 - 1:10]
-    previous = offset - 1 if offset > 1 else 0
+
+def paginated_posts(posts: BaseManager, offset: int, request: HttpRequest):
+    count = len(posts)
+    beginning = offset * 10
+    end = offset * 11
+    posts = posts[beginning: end]
     return {
-     "count": count,
-     "next": offset + 1,
-     "previous": previous,
-     "results": [post.serialize(request) for post in paginated_posts]
-   }
+        "count": count,
+        "next": offset + 1,
+        "previous": offset - 1 if offset > 1 else 0,
+        "results": [post.serialize(request) for post in posts]
+    }
