@@ -2,3 +2,13 @@ venv
 db.sqlite3
 __pycache__
 node_modules
+# Django #
+*.log
+*.pot
+*.pyc
+__pycache__
+db.sqlite3
+media
+
+# Backup files # 
+*.bak 
