@@ -18,13 +18,26 @@ class Post(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     liked_by_set = models.ManyToManyField(
         User, related_name="liked_posts_set", blank=True)
+        
+    @property
+    def like_count(self):
+        return self.liked_by_set.count()
 
-    def serialize(self):
-        return {
+    def serialize(self, request):
+        post = {
             'id': self.id,
             'creator': self.creator.username,
             'creator_id': self.creator.pk,
             'content': self.content,
             'created_at': self.created_at.strftime("%b %d %Y, %I:%M %p"),
-            'likes': self.liked_by_set.count()
+            'likes': self.like_count
         }
+        if request.user.is_authenticated:
+            post["is_liked"] = self.is_liked(request)
+        return post
+    
+    def is_liked(self, request) -> bool :
+        return request.user.liked_posts_set.filter(pk=self.pk).exists()
+
+    class Meta:
+        ordering = ['-created_at']

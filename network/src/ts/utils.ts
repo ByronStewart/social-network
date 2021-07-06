@@ -5,7 +5,7 @@ type PostDTO = {
   content: string,
   created_at: string,
   likes: number,
-  isLiked: boolean | null
+  is_liked: boolean | null
 }
 
 let pageNum = 1
@@ -17,7 +17,7 @@ function renderPosts(wrappingElement: HTMLDivElement, posts: PostDTO[], page: nu
   const numOfPosts = posts.length
   const startingPost = page * 10 - 1
   wrappingElement.innerHTML = ""
-  for (let i = startingPost; i < startingPost + 10 || i < posts.length; i++) {
+  for (let i = 0; i < posts.length; i++) {
     wrappingElement.appendChild(createPostElement(posts[i]))  
   }
 }
@@ -26,7 +26,7 @@ async function toggleLikePost( post: PostDTO): Promise<PostDTO> {
   const response = await fetch(`api/posts/like/${post.id}`,{
     method : "POST",
     body: JSON.stringify({
-      toLike: post.isLiked ? false : true
+      toLike: post.is_liked ? false : true
     })
   })
   const data = <PostDTO> await response.json()
@@ -36,9 +36,9 @@ async function toggleLikePost( post: PostDTO): Promise<PostDTO> {
 
 function addLikeButton(wrapper: HTMLDivElement, post: PostDTO) {
   const likeButton = document.createElement("button")
-  if (typeof(post.isLiked) != "boolean") return
+  if (typeof(post.is_liked) != "boolean") return
     likeButton.id = `$like-${post.id}`
-    likeButton.textContent = post.isLiked ? "Unlike" : "Like"
+    likeButton.textContent = post.is_liked ? "Unlike" : "Like"
   
   console.log("adding like button")
 
@@ -46,9 +46,9 @@ function addLikeButton(wrapper: HTMLDivElement, post: PostDTO) {
     const data = await toggleLikePost(post)
     console.log(data)
     const likeElement = <HTMLSpanElement>document.getElementById(`likes-${post.id}`)
-    post.isLiked = !post.isLiked
+    post.is_liked = !post.is_liked
     likeElement.textContent = data.likes.toString()
-    this.textContent = data.isLiked ? "unlike" : "like"
+    this.textContent = data.is_liked ? "unlike" : "like"
   })
 
   wrapper.appendChild(likeButton)

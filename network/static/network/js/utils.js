@@ -16,7 +16,7 @@ function renderPosts(wrappingElement, posts, page) {
     const numOfPosts = posts.length;
     const startingPost = page * 10 - 1;
     wrappingElement.innerHTML = "";
-    for (let i = startingPost; i < startingPost + 10 || i < posts.length; i++) {
+    for (let i = 0; i < posts.length; i++) {
         wrappingElement.appendChild(createPostElement(posts[i]));
     }
 }
@@ -25,7 +25,7 @@ function toggleLikePost(post) {
         const response = yield fetch(`api/posts/like/${post.id}`, {
             method: "POST",
             body: JSON.stringify({
-                toLike: post.isLiked ? false : true
+                toLike: post.is_liked ? false : true
             })
         });
         const data = yield response.json();
@@ -35,19 +35,19 @@ function toggleLikePost(post) {
 }
 function addLikeButton(wrapper, post) {
     const likeButton = document.createElement("button");
-    if (typeof (post.isLiked) != "boolean")
+    if (typeof (post.is_liked) != "boolean")
         return;
     likeButton.id = `$like-${post.id}`;
-    likeButton.textContent = post.isLiked ? "Unlike" : "Like";
+    likeButton.textContent = post.is_liked ? "Unlike" : "Like";
     console.log("adding like button");
     likeButton.addEventListener("click", function (e) {
         return __awaiter(this, void 0, void 0, function* () {
             const data = yield toggleLikePost(post);
             console.log(data);
             const likeElement = document.getElementById(`likes-${post.id}`);
-            post.isLiked = !post.isLiked;
+            post.is_liked = !post.is_liked;
             likeElement.textContent = data.likes.toString();
-            this.textContent = data.isLiked ? "unlike" : "like";
+            this.textContent = data.is_liked ? "unlike" : "like";
         });
     });
     wrapper.appendChild(likeButton);
