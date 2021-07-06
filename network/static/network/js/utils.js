@@ -8,10 +8,18 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+let pageNum = 1;
 var posts = [];
 var userIdDiv = document.querySelector("#user");
 var userId = userIdDiv.textContent ? parseInt(userIdDiv.textContent) : null;
-/* TODO */
+function renderPosts(wrappingElement, posts, page) {
+    const numOfPosts = posts.length;
+    const startingPost = page * 10 - 1;
+    wrappingElement.innerHTML = "";
+    for (let i = startingPost; i < startingPost + 10 || i < posts.length; i++) {
+        wrappingElement.appendChild(createPostElement(posts[i]));
+    }
+}
 function toggleLikePost(post) {
     return __awaiter(this, void 0, void 0, function* () {
         const response = yield fetch(`api/posts/like/${post.id}`, {

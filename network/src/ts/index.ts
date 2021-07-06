@@ -1,6 +1,7 @@
 
 const createNewPostForm = <HTMLFormElement>document.querySelector("#create-new-post-form")
 
+
 createNewPostForm?.addEventListener("submit", async e => {
   e.preventDefault()
   const contentElement = <HTMLInputElement>document.querySelector("#post-content")!
@@ -31,10 +32,7 @@ async function getAllPosts() {
   posts = <PostDTO[]>await response.json()
   console.log(posts)
   const postContainer = document.querySelector<HTMLDivElement>("#post-list")!
-  postContainer.innerHTML = ""
-  for (const post of posts) {
-    postContainer.appendChild(createPostElement(post))  
-  }
+  renderPosts(postContainer, posts, pageNum)
 
 }
 getAllPosts()

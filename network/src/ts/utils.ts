@@ -8,11 +8,20 @@ type PostDTO = {
   isLiked: boolean | null
 }
 
+let pageNum = 1
 var posts: PostDTO[] = []
 var userIdDiv = <HTMLDivElement>document.querySelector("#user")
 var userId = userIdDiv.textContent ? parseInt(userIdDiv.textContent) : null
 
-/* TODO */
+function renderPosts(wrappingElement: HTMLDivElement, posts: PostDTO[], page: number) {
+  const numOfPosts = posts.length
+  const startingPost = page * 10 - 1
+  wrappingElement.innerHTML = ""
+  for (let i = startingPost; i < startingPost + 10 || i < posts.length; i++) {
+    wrappingElement.appendChild(createPostElement(posts[i]))  
+  }
+}
+
 async function toggleLikePost( post: PostDTO): Promise<PostDTO> {
   const response = await fetch(`api/posts/like/${post.id}`,{
     method : "POST",

@@ -39,10 +39,7 @@ function getAllPosts() {
         posts = (yield response.json());
         console.log(posts);
         const postContainer = document.querySelector("#post-list");
-        postContainer.innerHTML = "";
-        for (const post of posts) {
-            postContainer.appendChild(createPostElement(post));
-        }
+        renderPosts(postContainer, posts, pageNum);
     });
 }
 getAllPosts();

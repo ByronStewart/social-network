@@ -33,10 +33,7 @@ async function getAllUserPosts() {
   const response = await fetch(`/api/posts/${userId}`)
   posts = <PostDTO[]>await response.json()
   const postContainer = document.querySelector<HTMLDivElement>("#post-list")!
-  postContainer.innerHTML = ""
-  for (const post of posts) {
-    postContainer.appendChild(createPostElement(post))  
-  }
+  renderPosts(postContainer, posts, pageNum)
 }
 
 

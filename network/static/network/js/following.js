@@ -15,10 +15,7 @@ function getAllFollowingPosts() {
         const response = yield fetch(`/api/posts/following`);
         posts = (yield response.json());
         const postContainer = document.querySelector("#post-list");
-        postContainer.innerHTML = "";
-        for (const post of posts) {
-            postContainer.appendChild(createPostElement(post));
-        }
+        renderPosts(postContainer, posts, pageNum);
     });
 }
 getAllFollowingPosts();
