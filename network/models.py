@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.http.request import HttpRequest
 from django.utils import timezone
 
 
@@ -10,6 +11,17 @@ class User(AbstractUser):
         blank=True,
         symmetrical=False
     )
+
+    @property
+    def follower_count(self):
+        return self.followed_by_set.count()
+
+    @property
+    def follow_count(self):
+        return self.following_set.count()
+
+    def is_followed_by_user(self, request: HttpRequest):
+        return request.user.following_set.filter(pk=self.pk).exists()
 
 
 class Post(models.Model):

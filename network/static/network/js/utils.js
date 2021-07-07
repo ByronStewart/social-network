@@ -13,7 +13,7 @@ var posts = {
     count: 0,
     next: 1,
     previous: 0,
-    results: []
+    results: [],
 };
 var userIdDiv = document.querySelector("#user");
 var userId = userIdDiv.textContent ? parseInt(userIdDiv.textContent) : null;
@@ -28,32 +28,13 @@ function toggleLikePost(post) {
         const response = yield fetch(`api/posts/like/${post.id}`, {
             method: "POST",
             body: JSON.stringify({
-                toLike: post.is_liked ? false : true
-            })
+                toLike: post.is_liked ? false : true,
+            }),
         });
         const data = yield response.json();
         console.log(data);
         return data;
     });
-}
-function addLikeButton(wrapper, post) {
-    const likeButton = document.createElement("button");
-    if (typeof (post.is_liked) != "boolean")
-        return;
-    likeButton.id = `$like-${post.id}`;
-    likeButton.textContent = post.is_liked ? "Unlike" : "Like";
-    console.log("adding like button");
-    likeButton.addEventListener("click", function (e) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const data = yield toggleLikePost(post);
-            console.log(data);
-            const likeElement = document.getElementById(`likes-${post.id}`);
-            post.is_liked = !post.is_liked;
-            likeElement.textContent = data.likes.toString();
-            this.textContent = data.is_liked ? "unlike" : "like";
-        });
-    });
-    wrapper.appendChild(likeButton);
 }
 function fillWrapperWithPost(wrapper, post) {
     wrapper.innerHTML = "";
@@ -86,7 +67,7 @@ function fillWrapperWithPost(wrapper, post) {
         editButton.classList.add("btn", "btn-warning", "btn-outline");
         editButton.textContent = "Edit";
         wrapper.appendChild(editButton);
-        editButton.addEventListener("click", e => {
+        editButton.addEventListener("click", (e) => {
             var _a;
             const oldContent = (_a = contentWrapper.firstChild) === null || _a === void 0 ? void 0 : _a.textContent;
             contentWrapper.innerHTML = "";
@@ -111,11 +92,118 @@ function fillWrapperWithPost(wrapper, post) {
     wrapper.appendChild(contentWrapper);
 }
 function createPostElement(post) {
+    const card = document.createElement("div");
+    card.classList.add("card", "border-dark", "mb-3", "max-w-30");
+    card.id = `post-${post.id}`;
+    const cardBody = createCardBody(post);
+    const cardFooter = createCardFooter(post);
+    //fillWrapperWithPost(card, post)
+    card.appendChild(cardBody);
+    card.appendChild(cardFooter);
+    return card;
+}
+function createCardBody(post) {
+    const cardBody = document.createElement("div");
+    cardBody.classList.add("card-body", "text-dark");
+    const cardTitle = createCardBodyTitle(post);
+    const cardText = createCardBodyText(post);
+    cardBody.appendChild(cardTitle);
+    cardBody.appendChild(cardText);
+    return cardBody;
+}
+function createCardBodyText(post) {
+    const cardText = document.createElement("div");
+    cardText.classList.add("card-text");
+    cardText.textContent = post.content;
+    return cardText;
+}
+function createCardBodyTitle(post) {
+    const cardTitle = document.createElement("h5");
+    const usernameLink = document.createElement("a");
+    usernameLink.classList.add("link-dark", "fw-bold");
+    usernameLink.href = `/user/${post.creator_id}`;
+    usernameLink.textContent = post.creator;
+    cardTitle.appendChild(usernameLink);
+    cardTitle.innerHTML += " wrote";
+    return cardTitle;
+}
+function createCardFooter(post) {
+    const cardFooter = document.createElement("div");
+    cardFooter.classList.add("card-footer", "d-flex", "justify-content-between", "align-items-center");
+    const dateElt = createDateElt(post);
+    const likesElt = createLikesElt(post);
+    cardFooter.appendChild(dateElt);
+    cardFooter.appendChild(likesElt);
+    return cardFooter;
+}
+function createDateElt(post) {
+    const div = document.createElement("div");
+    div.textContent = post.created_at;
+    return div;
+}
+function createLikesElt(post) {
     const wrapper = document.createElement("div");
-    wrapper.id = `post-${post.id}`;
-    wrapper.classList.add("mb-3", "row", "p-5", "bg-dark", "text-white");
-    fillWrapperWithPost(wrapper, post);
+    wrapper.classList.add("d-flex", "align-items-center", "justify-content-start");
+    const likeCount = createLikeCountElt(post);
+    wrapper.appendChild(likeCount);
+    if (post.is_liked != null) {
+        const likeBtn = createLikeBtn(post);
+        wrapper.appendChild(likeBtn);
+    }
     return wrapper;
+}
+function createLikeCountElt(post) {
+    const likeCountDiv = document.createElement("div");
+    likeCountDiv.classList.add("mx-2");
+    likeCountDiv.innerHTML = "Likes: ";
+    const likeCount = document.createElement("span");
+    likeCount.id = `likes-${post.id}`;
+    likeCount.textContent = post.likes.toString();
+    likeCountDiv.appendChild(likeCount);
+    return likeCountDiv;
+}
+function createLikeBtn(post) {
+    const likeBtn = document.createElement("button");
+    likeBtn.classList.add("btn", "btn-sm", "btn-outline-primary");
+    likeBtn.textContent = post.is_liked ? "Unlike" : "Like";
+    likeBtn.addEventListener("click", function () {
+        return __awaiter(this, void 0, void 0, function* () {
+            const updatedPost = yield toggleLikePost(post);
+            post = updatedPost;
+            const likeElement = (document.getElementById(`likes-${post.id}`));
+            likeElement.textContent = updatedPost.likes.toString();
+            if (post.is_liked) {
+                this.textContent = "unlike";
+                this.classList.remove("btn-outline-primary");
+                this.classList.add("btn-outline-danger");
+            }
+            else {
+                this.textContent = "like";
+                this.classList.remove("btn-outline-danger");
+                this.classList.add("btn-outline-primary");
+            }
+        });
+    });
+    return likeBtn;
+}
+function addLikeButton(wrapper, post) {
+    const likeButton = document.createElement("button");
+    if (typeof post.is_liked != "boolean")
+        return;
+    likeButton.id = `$like-${post.id}`;
+    likeButton.textContent = post.is_liked ? "Unlike" : "Like";
+    console.log("adding like button");
+    likeButton.addEventListener("click", function (e) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const data = yield toggleLikePost(post);
+            console.log(data);
+            const likeElement = (document.getElementById(`likes-${post.id}`));
+            post.is_liked = !post.is_liked;
+            likeElement.textContent = data.likes.toString();
+            this.textContent = data.is_liked ? "unlike" : "like";
+        });
+    });
+    wrapper.appendChild(likeButton);
 }
 function editPost(id) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -124,13 +212,13 @@ function editPost(id) {
         const response = yield fetch(`../api/posts/edit/${id}`, {
             method: "POST",
             body: JSON.stringify({
-                content: contentInput.value
-            })
+                content: contentInput.value,
+            }),
         });
         const data = yield response.json();
         if (data.message == "success") {
             console.log("success");
-            const wrapperElement = document.getElementById("post-" + data.post.id.toString());
+            const wrapperElement = (document.getElementById("post-" + data.post.id.toString()));
             console.log(wrapperElement);
             fillWrapperWithPost(wrapperElement, data.post);
         }

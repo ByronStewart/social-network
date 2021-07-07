@@ -15,7 +15,7 @@
               <ul class="navbar-nav mr-auto">
                 {% if user.is_authenticated %}
                     <li class="nav-item">
-                        <a class="nav-link" href="#"><strong>{{ user.username }}</strong></a>
+                        <a class="nav-link" href="{% url 'profile' pk=user.pk%}"><strong>{{ user.username }}</strong></a>
                     </li>
                 {% endif %}
                 <li class="nav-item">
@@ -46,7 +46,7 @@
         </div>
         
 {% comment %} POSTS CONTAINER {% endcomment %}
-<section class="container p-5 bg-light" id="post-list">
+<section class="container" id="post-list">
 </section>
 {% comment %} Paginator {% endcomment %}
 <footer class="d-flex justify-content-center">

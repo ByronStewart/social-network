@@ -1,4 +1,5 @@
 import json
+from network.services import get_profile_context
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import IntegrityError
@@ -25,18 +26,7 @@ def profile(request, pk):
         Will return the profile information for the pk of the user
     """
     profile = get_object_or_404(User, pk=pk)
-    isFollowed = request.user.following_set.filter(pk=pk)
-    isFollowed = isFollowed.exists()
-    numberOfPeopleFollowing = profile.following_set.count()
-    numberOfFollowers = profile.followed_by_set.count()
-    return render(request, "network/profile.html", {
-        "profile": profile,
-        "is_followed": isFollowed,
-        "number_of_people_following": numberOfPeopleFollowing,
-        "number_of_followers": numberOfFollowers
-    })
-
-# TODO
+    return render(request, "network/profile.html", get_profile_context(profile, request))
 
 
 @login_required

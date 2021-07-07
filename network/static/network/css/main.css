@@ -10729,4 +10729,8 @@ textarea.form-control-lg {
   margin-bottom: 1rem;
 }
 
+.max-w-30 {
+  max-width: 30rem;
+}
+
 /*# sourceMappingURL=main.css.map */
