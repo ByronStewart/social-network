@@ -5,33 +5,25 @@
 
 {% comment %} The profile section of the page {% endcomment %}
 
-<section class="container">
-  <h1>The profile page</h1>
-
-  <div class="row text-center p-5 bg-dark text-white">
-    <div class="col">
-      <h3>
-        {{profile.username}}
-      </h3>
-      <p class="lead">
-        {{profile.email}}
-      </p>
-    </div>
-    <div class="col">
-      <p>number of followers: <span id="follower-count">{{profile.follower_count}}</span></p>
-      <p>number of people followed: <span>{{profile.follow_count}}</span></p>
-    </div>
+<section class="narrow-container mx-auto mt-n3 p-3">
+  <h3>
+      {{profile.username}}'s Profile Page
+  </h3>
+  <div class="d-flex justify-content-start">
+      <p>Followers: <span id="follower-count">{{profile.follower_count}}</span></p>
+  
+      <p class="mx-3">Following: <span>{{profile.follow_count}}</span></p>
   </div>
-
   {% if user.is_authenticated %}
     {% if user != profile %}
       {% if is_followed %}
-        <button id="follow-btn" data-follow-status="true">Unfollow</button>
+        <button id="follow-btn" class="btn btn-dark btn-lg" data-follow-status="true">Unfollow</button>
       {% else %}
-        <button id="follow-btn" data-follow-status="false">Follow</button>
+        <button id="follow-btn" class="btn btn-dark btn-lg" data-follow-status="false">Follow</button>
       {% endif %}
     {% endif %}
   {% endif %}
+  <hr>
 </section>
 
 {% comment %} 

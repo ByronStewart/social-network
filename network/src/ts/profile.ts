@@ -29,13 +29,11 @@ var nextPageButton = <HTMLButtonElement>document.querySelector("#next-page-btn")
 var prevPageButton = <HTMLButtonElement>document.querySelector("#prev-page-btn")
 
 nextPageButton?.addEventListener("click", () => {
-  ++offset
-  getAllUserPosts(offset)
+  getAllUserPosts(posts.next)
 })
 
 prevPageButton?.addEventListener("click", () => {
-  offset = offset < 1 ? 0 : --offset
-  getAllUserPosts(offset)
+  getAllUserPosts(posts.previous)
 })
 
 async function getAllUserPosts(offset: number) {
@@ -50,4 +48,4 @@ async function getAllUserPosts(offset: number) {
 }
 
 
-getAllUserPosts(offset)
+getAllUserPosts(posts.next)

@@ -12,12 +12,10 @@ const createNewPostForm = document.querySelector("#create-new-post-form");
 var nextPageButton = document.querySelector("#next-page-btn");
 var prevPageButton = document.querySelector("#prev-page-btn");
 nextPageButton === null || nextPageButton === void 0 ? void 0 : nextPageButton.addEventListener("click", () => {
-    ++offset;
-    getAllPosts(offset);
+    getAllPosts(posts.next);
 });
 prevPageButton === null || prevPageButton === void 0 ? void 0 : prevPageButton.addEventListener("click", () => {
-    offset = offset < 1 ? 0 : --offset;
-    getAllPosts(offset);
+    getAllPosts(posts.previous);
 });
 createNewPostForm === null || createNewPostForm === void 0 ? void 0 : createNewPostForm.addEventListener("submit", (e) => __awaiter(void 0, void 0, void 0, function* () {
     e.preventDefault();
@@ -36,7 +34,7 @@ createNewPostForm === null || createNewPostForm === void 0 ? void 0 : createNewP
     const message = yield response.json();
     if (response.ok) {
         // reload the posts
-        yield getAllPosts(offset);
+        yield getAllPosts(0);
     }
     else {
         alert(message.error);
@@ -52,4 +50,4 @@ function getAllPosts(offset) {
         renderPosts(postContainer, posts.results);
     });
 }
-getAllPosts(offset);
+getAllPosts(posts.next);

@@ -8,10 +8,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var offset = 0;
 var posts = {
     count: 0,
-    next: 1,
+    next: 0,
     previous: 0,
     results: [],
 };
@@ -36,68 +35,12 @@ function toggleLikePost(post) {
         return data;
     });
 }
-function fillWrapperWithPost(wrapper, post) {
-    wrapper.innerHTML = "";
-    const creatorH5 = document.createElement("h5");
-    const creatorProfileLink = document.createElement("a");
-    creatorProfileLink.href = `/user/${post.creator_id}`;
-    creatorProfileLink.textContent = post.creator;
-    creatorH5.appendChild(creatorProfileLink);
-    wrapper.appendChild(creatorH5);
-    const contentWrapper = document.createElement("div");
-    const contentP = document.createElement("p");
-    const likeP = document.createElement("p");
-    const likeSpan = document.createElement("span");
-    likeSpan.id = `likes-${post.id}`;
-    likeSpan.textContent = post.likes.toString();
-    likeP.textContent = "Likes: ";
-    likeP.appendChild(likeSpan);
-    const dateTimeElt = document.createElement("p");
-    dateTimeElt.textContent = post.created_at;
-    contentP.textContent = post.content;
-    contentWrapper.appendChild(contentP);
-    contentWrapper.appendChild(likeP);
-    contentWrapper.appendChild(dateTimeElt);
-    const likeWrapper = document.createElement("div");
-    addLikeButton(likeWrapper, post);
-    wrapper.appendChild(likeWrapper);
-    // If post is by the logged in user then make it editable
-    if (post.creator_id === userId) {
-        const editButton = document.createElement("button");
-        editButton.classList.add("btn", "btn-warning", "btn-outline");
-        editButton.textContent = "Edit";
-        wrapper.appendChild(editButton);
-        editButton.addEventListener("click", (e) => {
-            var _a;
-            const oldContent = (_a = contentWrapper.firstChild) === null || _a === void 0 ? void 0 : _a.textContent;
-            contentWrapper.innerHTML = "";
-            const form = document.createElement("form");
-            const textArea = document.createElement("input");
-            textArea.setAttribute("type", "text");
-            textArea.id = post.id.toString();
-            const button = document.createElement("button");
-            button.setAttribute("type", "submit");
-            button.classList.add("btn", "btn-info");
-            form.appendChild(textArea);
-            form.appendChild(button);
-            textArea.value = oldContent ? oldContent : "";
-            contentWrapper.appendChild(form);
-            form.addEventListener("submit", (e) => __awaiter(this, void 0, void 0, function* () {
-                e.preventDefault();
-                yield editPost(post.id);
-            }));
-            textArea.focus();
-        });
-    }
-    wrapper.appendChild(contentWrapper);
-}
 function createPostElement(post) {
     const card = document.createElement("div");
     card.classList.add("card", "border-dark", "mb-3", "max-w-30");
     card.id = `post-${post.id}`;
     const cardBody = createCardBody(post);
     const cardFooter = createCardFooter(post);
-    //fillWrapperWithPost(card, post)
     card.appendChild(cardBody);
     card.appendChild(cardFooter);
     return card;
@@ -114,18 +57,62 @@ function createCardBody(post) {
 function createCardBodyText(post) {
     const cardText = document.createElement("div");
     cardText.classList.add("card-text");
-    cardText.textContent = post.content;
+    cardText.id = `post-${post.id}-edit-area`;
+    const cardTextContent = createCardTextContent(post);
+    cardText.appendChild(cardTextContent);
     return cardText;
 }
+function createCardTextContent(post) {
+    const p = document.createElement("p");
+    p.textContent = post.content;
+    return p;
+}
 function createCardBodyTitle(post) {
-    const cardTitle = document.createElement("h5");
+    const cardTitle = document.createElement("div");
+    cardTitle.classList.add("d-flex", "justify-content-between");
+    cardTitle.appendChild(createCardBodyTitleText(post));
+    if (userOwnsPost(post)) {
+        const editBtn = createEditBtn(post);
+        cardTitle.appendChild(editBtn);
+    }
+    return cardTitle;
+}
+function createCardBodyTitleText(post) {
+    const cardTitleText = document.createElement("h5");
     const usernameLink = document.createElement("a");
     usernameLink.classList.add("link-dark", "fw-bold");
     usernameLink.href = `/user/${post.creator_id}`;
     usernameLink.textContent = post.creator;
-    cardTitle.appendChild(usernameLink);
-    cardTitle.innerHTML += " wrote";
-    return cardTitle;
+    cardTitleText.appendChild(usernameLink);
+    cardTitleText.innerHTML += " wrote";
+    return cardTitleText;
+}
+function createEditBtn(post) {
+    const editBtn = document.createElement("button");
+    editBtn.classList.add("btn", "btn-sm", "btn-outline-warning");
+    editBtn.textContent = "Edit";
+    editBtn.addEventListener("click", function makePostEditable() {
+        console.log(post.id);
+        const cardText = document.getElementById(`post-${post.id}-edit-area`);
+        cardText.innerHTML = "";
+        const editArea = createEditArea(post);
+        cardText.appendChild(editArea);
+    });
+    return editBtn;
+}
+function replaceEditAreaWithPostContent(post) {
+    console.log(post);
+    const cardText = document.getElementById(`post-${post.id}-edit-area`);
+    cardText.innerHTML = "";
+    cardText.appendChild(createCardTextContent(post));
+}
+/* TODO */
+function userOwnsPost(post) {
+    let userId = document.getElementById("user").textContent;
+    userId = userId ? userId : "";
+    if (post.creator_id === parseInt(userId))
+        return true;
+    return false;
 }
 function createCardFooter(post) {
     const cardFooter = document.createElement("div");
@@ -164,8 +151,14 @@ function createLikeCountElt(post) {
 }
 function createLikeBtn(post) {
     const likeBtn = document.createElement("button");
-    likeBtn.classList.add("btn", "btn-sm", "btn-outline-primary");
-    likeBtn.textContent = post.is_liked ? "Unlike" : "Like";
+    if (post.is_liked) {
+        likeBtn.classList.add("btn", "btn-sm", "btn-outline-danger");
+        likeBtn.textContent = "Unlike";
+    }
+    else {
+        likeBtn.classList.add("btn", "btn-sm", "btn-outline-primary");
+        likeBtn.textContent = "Like";
+    }
     likeBtn.addEventListener("click", function () {
         return __awaiter(this, void 0, void 0, function* () {
             const updatedPost = yield toggleLikePost(post);
@@ -186,42 +179,47 @@ function createLikeBtn(post) {
     });
     return likeBtn;
 }
-function addLikeButton(wrapper, post) {
-    const likeButton = document.createElement("button");
-    if (typeof post.is_liked != "boolean")
-        return;
-    likeButton.id = `$like-${post.id}`;
-    likeButton.textContent = post.is_liked ? "Unlike" : "Like";
-    console.log("adding like button");
-    likeButton.addEventListener("click", function (e) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const data = yield toggleLikePost(post);
-            console.log(data);
-            const likeElement = (document.getElementById(`likes-${post.id}`));
-            post.is_liked = !post.is_liked;
-            likeElement.textContent = data.likes.toString();
-            this.textContent = data.is_liked ? "unlike" : "like";
-        });
-    });
-    wrapper.appendChild(likeButton);
-}
-function editPost(id) {
+function submitUpdatePost(id, content) {
     return __awaiter(this, void 0, void 0, function* () {
-        const contentInput = document.getElementById(`${id}`);
-        console.log("editing post");
         const response = yield fetch(`../api/posts/edit/${id}`, {
             method: "POST",
             body: JSON.stringify({
-                content: contentInput.value,
+                content,
             }),
         });
         const data = yield response.json();
-        if (data.message == "success") {
-            console.log("success");
-            const wrapperElement = (document.getElementById("post-" + data.post.id.toString()));
-            console.log(wrapperElement);
-            fillWrapperWithPost(wrapperElement, data.post);
-        }
-        console.log(data);
+        return data.post;
     });
+}
+function createEditArea(post) {
+    const form = document.createElement("form");
+    form.classList.add("mt-3");
+    const wrapper = document.createElement("div");
+    wrapper.classList.add("input-group");
+    const input = document.createElement("input");
+    input.type = "text";
+    input.id = `post-${post.id}-content`;
+    input.classList.add("form-control");
+    input.placeholder = post.content;
+    const submitBtn = document.createElement("button");
+    submitBtn.classList.add("btn", "btn-outline-secondary");
+    submitBtn.textContent = "Post";
+    wrapper.appendChild(input);
+    wrapper.appendChild(submitBtn);
+    form.appendChild(wrapper);
+    document.addEventListener("keydown", function cancelUpdatePost(e) {
+        console.log("pressed key");
+        if (e.key === "Escape") {
+            replaceEditAreaWithPostContent(post);
+            this.removeEventListener("keydown", cancelUpdatePost);
+        }
+    });
+    form.addEventListener("submit", (e) => __awaiter(this, void 0, void 0, function* () {
+        e.preventDefault();
+        const contentInput = (document.getElementById(`post-${post.id}-content`));
+        const content = contentInput.value;
+        post = yield submitUpdatePost(post.id, content);
+        replaceEditAreaWithPostContent(post);
+    }));
+    return form;
 }

@@ -2,37 +2,23 @@
 {% load static %}
 {% block body %}
 {% if user.is_authenticated %}
-<form class="mb-5" action="api/posts/new" method="post" id="create-new-post-form">
-  {% csrf_token %}
-  <div class="mb-3">
-    <label for="content" class="form-label">New Post:</label>
-    <input type="text" class="form-control" name="content" id="post-content"/>
-  </div>
-  <button type="submit" class="btn btn-outline-info">Create Post</button>
-</form>
-{% endif %}
 
-{% comment %} Template for post {% endcomment %}
-<div class="container">
-  <div class="card border-dark mb-3" style="max-width: 30rem;">
-    <div class="card-body text-dark">
-      <h5 class="card-title">
-        <a href="" class="link-dark fw-bold" >Username</a> wrote
-      </h5>
-      <div class="card-text">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Eveniet, consequuntur!
+<div class="narrow-container">
+  <div class="m-3 my-0 my-sm-5 ">
+    <form  action="api/posts/new" method="post" id="create-new-post-form">
+      {% csrf_token %}
+        <label for="content" class="form-label h5">What are you thinking?</label>
+      <div class="input-group mb-3">
+        <input type="text" class="form-control" name="content" id="post-content"/>
+      <button type="submit" class="btn btn-dark">Create Post</button>
       </div>
-    </div>
-    <div class="card-footer d-flex justify-content-between align-items-center">
-        <div>Date and time</div>
-        <div class="d-flex align-items-center justify-content-start">
-          <div class="mx-2">Likes: 2</div>
-          <button class="btn btn-sm btn-outline-primary">Like</button>
-        </div>
-      </div>
+    </form>
+      <hr>
   </div>
+
 </div>
 
+{% endif %}
 
 {% endblock body %}
 

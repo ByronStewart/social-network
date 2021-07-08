@@ -2,13 +2,11 @@ var nextPageButton = <HTMLButtonElement>document.querySelector("#next-page-btn")
 var prevPageButton = <HTMLButtonElement>document.querySelector("#prev-page-btn")
 
 nextPageButton?.addEventListener("click", () => {
-  ++offset
-  getAllFollowingPosts(offset)
+  getAllFollowingPosts(posts.next)
 })
 
 prevPageButton?.addEventListener("click", () => {
-  offset = offset < 1 ? 0 : --offset
-  getAllFollowingPosts(offset)
+  getAllFollowingPosts(posts.previous)
 })
 
 async function getAllFollowingPosts(offset: number) {
@@ -21,4 +19,4 @@ async function getAllFollowingPosts(offset: number) {
 }
 
 
-getAllFollowingPosts(offset)
+getAllFollowingPosts(posts.next)

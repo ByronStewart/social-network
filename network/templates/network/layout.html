@@ -7,46 +7,55 @@
         <link href="{% static 'network/css/main.css' %}" rel="stylesheet">
         {% block head %}{% endblock head %}
     </head>
-    <body>
-        <nav class="navbar navbar-expand-sm navbar-light bg-light mb-3">
-            <a class="navbar-brand" href="#">Network</a>
-          
-            <div>
-              <ul class="navbar-nav mr-auto">
-                {% if user.is_authenticated %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'profile' pk=user.pk%}"><strong>{{ user.username }}</strong></a>
-                    </li>
-                {% endif %}
-                <li class="nav-item">
-                  <a class="nav-link" href="{% url 'index' %}">All Posts</a>
-                </li>
-                {% if user.is_authenticated %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'following' %}">Following</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'logout' %}">Log Out</a>
-                    </li>
-                {% else %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'login' %}">Log In</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'register' %}">Register</a>
-                    </li>
-                {% endif %}
-              </ul>
+    <body class="bg-light">
+    <div class="bg-dark">
+        <nav class="navbar navbar-expand-sm navbar-dark mb-3">
+            <div class="container">
+                <a class="navbar-brand" href="/">Network</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#main-nav" aria-controls="main-nav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="main-nav">
+                    <ul class="navbar-nav mr-auto">
+                        {% if user.is_authenticated %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'profile' pk=user.pk%}"><strong>{{ user.username }}</strong></a>
+                            </li>
+                        {% endif %}
+                        <li class="nav-item">
+                        <a class="nav-link" href="{% url 'index' %}">All Posts</a>
+                        </li>
+                        {% if user.is_authenticated %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'following' %}">Following</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'logout' %}">Log Out</a>
+                            </li>
+                        {% else %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'login' %}">Log In</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'register' %}">Register</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            
             </div>
-          </nav>
+        </nav>
+    </div>
         
-        <div class="container">
+        
             {% block body %}
             {% endblock %}
-        </div>
+
         
 {% comment %} POSTS CONTAINER {% endcomment %}
-<section class="container" id="post-list">
+<section class="narrow-container">
+    <div id="post-list" class="m-3">
+    </div>
 </section>
 {% comment %} Paginator {% endcomment %}
 <footer class="d-flex justify-content-center">
@@ -65,8 +74,9 @@
 </footer>
 
         {% comment %} this is dodgy but I cbf figuring out how to get the user from the session in js {% endcomment %}
-            <div style="display: none;" id="user">{{user.pk}}</div>
+        <div style="display: none;" id="user">{{user.pk}}</div>
         <script src="{% static "network/js/utils.js"%}"></script>
+        <script src="{% static "network/js/bootstrap.min.js"%}"></script>
         {% block scripts %}
         {% endblock scripts %}
         {% if user.is_authenticated %}

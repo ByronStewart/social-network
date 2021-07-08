@@ -33,12 +33,10 @@ followBtn === null || followBtn === void 0 ? void 0 : followBtn.addEventListener
 var nextPageButton = document.querySelector("#next-page-btn");
 var prevPageButton = document.querySelector("#prev-page-btn");
 nextPageButton === null || nextPageButton === void 0 ? void 0 : nextPageButton.addEventListener("click", () => {
-    ++offset;
-    getAllUserPosts(offset);
+    getAllUserPosts(posts.next);
 });
 prevPageButton === null || prevPageButton === void 0 ? void 0 : prevPageButton.addEventListener("click", () => {
-    offset = offset < 1 ? 0 : --offset;
-    getAllUserPosts(offset);
+    getAllUserPosts(posts.previous);
 });
 function getAllUserPosts(offset) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -52,4 +50,4 @@ function getAllUserPosts(offset) {
         renderPosts(postContainer, posts.results);
     });
 }
-getAllUserPosts(offset);
+getAllUserPosts(posts.next);

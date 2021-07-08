@@ -11,12 +11,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 var nextPageButton = document.querySelector("#next-page-btn");
 var prevPageButton = document.querySelector("#prev-page-btn");
 nextPageButton === null || nextPageButton === void 0 ? void 0 : nextPageButton.addEventListener("click", () => {
-    ++offset;
-    getAllFollowingPosts(offset);
+    getAllFollowingPosts(posts.next);
 });
 prevPageButton === null || prevPageButton === void 0 ? void 0 : prevPageButton.addEventListener("click", () => {
-    offset = offset < 1 ? 0 : --offset;
-    getAllFollowingPosts(offset);
+    getAllFollowingPosts(posts.previous);
 });
 function getAllFollowingPosts(offset) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -28,4 +26,4 @@ function getAllFollowingPosts(offset) {
         renderPosts(postContainer, posts.results);
     });
 }
-getAllFollowingPosts(offset);
+getAllFollowingPosts(posts.next);

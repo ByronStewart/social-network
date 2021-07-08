@@ -4,13 +4,11 @@ var nextPageButton = <HTMLButtonElement>document.querySelector("#next-page-btn")
 var prevPageButton = <HTMLButtonElement>document.querySelector("#prev-page-btn")
 
 nextPageButton?.addEventListener("click", () => {
-  ++offset
-  getAllPosts(offset)
+  getAllPosts(posts.next)
 })
 
 prevPageButton?.addEventListener("click", () => {
-  offset = offset < 1 ? 0 : --offset
-  getAllPosts(offset)
+  getAllPosts(posts.previous)
 })
 
 createNewPostForm?.addEventListener("submit", async e => {
@@ -31,7 +29,7 @@ createNewPostForm?.addEventListener("submit", async e => {
   const message = await response.json()
   if(response.ok) {
     // reload the posts
-    await getAllPosts(offset)
+    await getAllPosts(0)
   } else {
     alert(message.error)
   }
@@ -46,4 +44,4 @@ async function getAllPosts(offset: number) {
   renderPosts(postContainer, posts.results)
 
 }
-getAllPosts(offset)
+getAllPosts(posts.next)
