@@ -17,7 +17,6 @@ createNewPostForm?.addEventListener("submit", async e => {
   const content = contentElement.value
   contentElement.value = ""
   contentElement.focus()
-  console.log("submitting form", content)
 
   // send the content to the server
   const response = await fetch("api/posts/new", {
@@ -36,10 +35,8 @@ createNewPostForm?.addEventListener("submit", async e => {
 })
 
 async function getAllPosts(offset: number) {
-  console.log("fetching posts")
   const response = await fetch(`/api/posts?offset=${offset}`)
   posts = <PaginatedPosts>await response.json()
-  console.log(posts)
   const postContainer = document.querySelector<HTMLDivElement>("#post-list")!
   renderPosts(postContainer, posts.results)
 

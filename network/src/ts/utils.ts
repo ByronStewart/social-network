@@ -39,7 +39,6 @@ async function toggleLikePost(post: PostDTO): Promise<PostDTO> {
     }),
   });
   const data = <PostDTO>await response.json();
-  console.log(data);
   return data;
 }
 
@@ -107,7 +106,6 @@ function createEditBtn(post: PostDTO): HTMLButtonElement {
   editBtn.textContent = "Edit";
 
   editBtn.addEventListener("click", function makePostEditable() {
-    console.log(post.id);
     const cardText = document.getElementById(`post-${post.id}-edit-area`)!;
     cardText.innerHTML = "";
     const editArea = createEditArea(post);
@@ -118,7 +116,6 @@ function createEditBtn(post: PostDTO): HTMLButtonElement {
 }
 
 function replaceEditAreaWithPostContent(post: PostDTO) {
-  console.log(post);
   const cardText = document.getElementById(`post-${post.id}-edit-area`)!;
   cardText.innerHTML = "";
   cardText.appendChild(createCardTextContent(post));
@@ -239,7 +236,6 @@ function createEditArea(post: PostDTO) {
   form.appendChild(wrapper);
 
   document.addEventListener("keydown", function cancelUpdatePost(e) {
-    console.log("pressed key");
     if (e.key === "Escape") {
       replaceEditAreaWithPostContent(post);
       this.removeEventListener("keydown", cancelUpdatePost);

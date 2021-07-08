@@ -10,7 +10,6 @@ prevPageButton?.addEventListener("click", () => {
 })
 
 async function getAllFollowingPosts(offset: number) {
-  console.log("fetching posts")
   // get the user id from the url
   const response = await fetch(`/api/posts/following?offset=${offset}`)
   posts = <PaginatedPosts>await response.json()

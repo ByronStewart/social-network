@@ -23,7 +23,6 @@ createNewPostForm === null || createNewPostForm === void 0 ? void 0 : createNewP
     const content = contentElement.value;
     contentElement.value = "";
     contentElement.focus();
-    console.log("submitting form", content);
     // send the content to the server
     const response = yield fetch("api/posts/new", {
         method: "POST",
@@ -42,10 +41,8 @@ createNewPostForm === null || createNewPostForm === void 0 ? void 0 : createNewP
 }));
 function getAllPosts(offset) {
     return __awaiter(this, void 0, void 0, function* () {
-        console.log("fetching posts");
         const response = yield fetch(`/api/posts?offset=${offset}`);
         posts = (yield response.json());
-        console.log(posts);
         const postContainer = document.querySelector("#post-list");
         renderPosts(postContainer, posts.results);
     });

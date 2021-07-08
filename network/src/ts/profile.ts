@@ -1,4 +1,4 @@
-console.log('hello from profile')
+
 
 const followBtn = document.querySelector("#follow-btn")
 const followerCount = document.querySelector("#follower-count")
@@ -22,7 +22,6 @@ followBtn?.addEventListener("click", async e => {
     const followerCountElt = <HTMLSpanElement>document.querySelector("#follower-count")!
     followerCountElt.textContent = data.follower_count
   }
-  console.log(data)
 })
 
 var nextPageButton = <HTMLButtonElement>document.querySelector("#next-page-btn")
@@ -37,7 +36,6 @@ prevPageButton?.addEventListener("click", () => {
 })
 
 async function getAllUserPosts(offset: number) {
-  console.log("fetching posts")
   const url = window.location.href
   // get the user id from the url
   const userId = url.split("/").slice(-1).pop()

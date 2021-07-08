@@ -8,7 +8,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-console.log('hello from profile');
 const followBtn = document.querySelector("#follow-btn");
 const followerCount = document.querySelector("#follower-count");
 followBtn === null || followBtn === void 0 ? void 0 : followBtn.addEventListener("click", (e) => __awaiter(void 0, void 0, void 0, function* () {
@@ -28,7 +27,6 @@ followBtn === null || followBtn === void 0 ? void 0 : followBtn.addEventListener
         const followerCountElt = document.querySelector("#follower-count");
         followerCountElt.textContent = data.follower_count;
     }
-    console.log(data);
 }));
 var nextPageButton = document.querySelector("#next-page-btn");
 var prevPageButton = document.querySelector("#prev-page-btn");
@@ -40,7 +38,6 @@ prevPageButton === null || prevPageButton === void 0 ? void 0 : prevPageButton.a
 });
 function getAllUserPosts(offset) {
     return __awaiter(this, void 0, void 0, function* () {
-        console.log("fetching posts");
         const url = window.location.href;
         // get the user id from the url
         const userId = url.split("/").slice(-1).pop();

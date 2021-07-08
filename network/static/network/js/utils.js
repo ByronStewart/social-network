@@ -31,7 +31,6 @@ function toggleLikePost(post) {
             }),
         });
         const data = yield response.json();
-        console.log(data);
         return data;
     });
 }
@@ -92,7 +91,6 @@ function createEditBtn(post) {
     editBtn.classList.add("btn", "btn-sm", "btn-outline-warning");
     editBtn.textContent = "Edit";
     editBtn.addEventListener("click", function makePostEditable() {
-        console.log(post.id);
         const cardText = document.getElementById(`post-${post.id}-edit-area`);
         cardText.innerHTML = "";
         const editArea = createEditArea(post);
@@ -101,7 +99,6 @@ function createEditBtn(post) {
     return editBtn;
 }
 function replaceEditAreaWithPostContent(post) {
-    console.log(post);
     const cardText = document.getElementById(`post-${post.id}-edit-area`);
     cardText.innerHTML = "";
     cardText.appendChild(createCardTextContent(post));
@@ -208,7 +205,6 @@ function createEditArea(post) {
     wrapper.appendChild(submitBtn);
     form.appendChild(wrapper);
     document.addEventListener("keydown", function cancelUpdatePost(e) {
-        console.log("pressed key");
         if (e.key === "Escape") {
             replaceEditAreaWithPostContent(post);
             this.removeEventListener("keydown", cancelUpdatePost);

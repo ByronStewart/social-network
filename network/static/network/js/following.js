@@ -18,7 +18,6 @@ prevPageButton === null || prevPageButton === void 0 ? void 0 : prevPageButton.a
 });
 function getAllFollowingPosts(offset) {
     return __awaiter(this, void 0, void 0, function* () {
-        console.log("fetching posts");
         // get the user id from the url
         const response = yield fetch(`/api/posts/following?offset=${offset}`);
         posts = (yield response.json());
