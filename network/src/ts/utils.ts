@@ -108,7 +108,8 @@ function createEditBtn(post: PostDTO): HTMLButtonElement {
   editBtn.addEventListener("click", function makePostEditable() {
     const cardText = document.getElementById(`post-${post.id}-edit-area`)!;
     cardText.innerHTML = "";
-    const editArea = createEditArea(post);
+    const p = posts.results.find(p => p.id === post.id)!
+    const editArea = createEditArea(p);
     cardText.appendChild(editArea);
   });
 
@@ -227,7 +228,7 @@ function createEditArea(post: PostDTO) {
   input.type = "text";
   input.id = `post-${post.id}-content`;
   input.classList.add("form-control");
-  input.placeholder = post.content;
+  input.placeholder = post.content
   const submitBtn = document.createElement("button");
   submitBtn.classList.add("btn", "btn-outline-secondary");
   submitBtn.textContent = "Post";
@@ -244,11 +245,13 @@ function createEditArea(post: PostDTO) {
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
+    console.log(post)
     const contentInput = <HTMLInputElement>(
       document.getElementById(`post-${post.id}-content`)!
     );
     const content = contentInput.value;
     post = await submitUpdatePost(post.id, content);
+    posts.results = posts.results.map(p => p.id === post.id ? post : p)
     replaceEditAreaWithPostContent(post);
   });
   return form;

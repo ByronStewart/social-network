@@ -20,8 +20,10 @@ class User(AbstractUser):
     def follow_count(self):
         return self.following_set.count()
 
-    def is_followed_by_user(self, request: HttpRequest):
-        return request.user.following_set.filter(pk=self.pk).exists()
+    def is_followed_by_user(self, request: HttpRequest) -> bool:
+        if request.user.is_authenticated:
+            return request.user.following_set.filter(pk=self.pk).exists()
+        return None
 
 
 class Post(models.Model):

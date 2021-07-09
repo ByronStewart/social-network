@@ -93,7 +93,8 @@ function createEditBtn(post) {
     editBtn.addEventListener("click", function makePostEditable() {
         const cardText = document.getElementById(`post-${post.id}-edit-area`);
         cardText.innerHTML = "";
-        const editArea = createEditArea(post);
+        const p = posts.results.find(p => p.id === post.id);
+        const editArea = createEditArea(p);
         cardText.appendChild(editArea);
     });
     return editBtn;
@@ -212,9 +213,11 @@ function createEditArea(post) {
     });
     form.addEventListener("submit", (e) => __awaiter(this, void 0, void 0, function* () {
         e.preventDefault();
+        console.log(post);
         const contentInput = (document.getElementById(`post-${post.id}-content`));
         const content = contentInput.value;
         post = yield submitUpdatePost(post.id, content);
+        posts.results = posts.results.map(p => p.id === post.id ? post : p);
         replaceEditAreaWithPostContent(post);
     }));
     return form;
