@@ -9,7 +9,8 @@
     "watch-sass": "sass -w network/src/sass:network/static/network/css",
     "cypress:open": "cypress open",
     "cypress:run": "cypress run",
-    "server": "python manage.py runserver"
+    "server": "python manage.py runserver",
+    "flush-db": "python manage.py flush --no-input"
   },
   "repository": {
     "type": "git",

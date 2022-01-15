@@ -5,17 +5,17 @@
 
 <div class="narrow-container">
   <div class="m-3 my-0 my-sm-5 ">
-    <form  action="api/posts/new" method="post" id="create-new-post-form">
+    <form  action="api/posts/new" method="post" id="create-new-post-form" data-testid="create-new-post-form">
       {% csrf_token %}
         <label for="content" class="form-label h5">What are you thinking?</label>
       <div class="input-group mb-3">
-        <input type="text" class="form-control" name="content" id="post-content"/>
-      <button type="submit" class="btn btn-dark">Create Post</button>
+        <input type="text" class="form-control" name="content" id="post-content" data-testid="post-content-input"/>
+      <button type="submit" class="btn btn-dark" data-testid="post-content-submit">Create Post</button>
       </div>
     </form>
       <hr>
   </div>
-
+  {% comment %} Posts will be appended here {% endcomment %}
 </div>
 
 {% endif %}

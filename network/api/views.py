@@ -156,7 +156,7 @@ def createPost(request: HttpRequest):
     post.save()
 
     # TODO make a better response
-    return JsonResponse({"message": "thankyou"})
+    return JsonResponse({"message": "thankyou"}, status=201)
 
 # TODO
 

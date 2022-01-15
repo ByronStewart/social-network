@@ -24,20 +24,28 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
-import '@testing-library/cypress/add-commands'
+import "@testing-library/cypress/add-commands";
 
-
-Cypress.Commands.add('login', (username, password) => {
-  cy.visit("/login")
+Cypress.Commands.add("login", (username, password) => {
+  cy.visit("/login");
   cy.get("[name=csrfmiddlewaretoken]")
     .should("exist")
     .and("have.attr", "value")
-    .as("csrfToken")
-
-  cy.get("@csrfToken")
-    .then(token => {
-      cy.request({
-        method
-      })
-    })
-})
+    .as("csrfToken");
+  cy.get("@csrfToken").then((token) => {
+    cy.request({
+      method: "POST",
+      url: "/login",
+      form: true,
+      body: {
+        username,
+        password,
+      },
+      headers: {
+        "X-CSRFTOKEN": token,
+      },
+    });
+  });
+  cy.getCookie("sessionid").should("exist");
+  cy.getCookie("csrftoken").should("exist");
+});

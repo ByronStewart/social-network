@@ -1,0 +1,74 @@
+[
+{
+    "model": "network.user",
+    "fields": {
+        "password": "pbkdf2_sha256$260000$iwFhtxNOZSoOtNRIU7bUQt$vVe916G4WsRg205JKQ0+9NhnebqE6w9EtYV6YIxI1H4=",
+        "last_login": "2022-01-15T02:56:19.628Z",
+        "is_superuser": false,
+        "username": "alice",
+        "first_name": "",
+        "last_name": "",
+        "email": "alice@gmail.com",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2022-01-15T02:56:19.351Z",
+        "groups": [],
+        "user_permissions": [],
+        "following_set": []
+    }
+},
+{
+    "model": "network.user",
+    "fields": {
+        "password": "pbkdf2_sha256$260000$SJzgmwZ7NxUsI2EH9P7oft$HqMFWNMZ5+PsizMitPQOSKy0jLf9guSfZzW/+KFKWWg=",
+        "last_login": "2022-01-15T02:56:30.979Z",
+        "is_superuser": false,
+        "username": "bob",
+        "first_name": "",
+        "last_name": "",
+        "email": "bob@gmail.com",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2022-01-15T02:56:30.700Z",
+        "groups": [],
+        "user_permissions": [],
+        "following_set": []
+    }
+},
+{
+    "model": "network.user",
+    "fields": {
+        "password": "pbkdf2_sha256$260000$pkIexXZYOfsw2MDO8cx948$D5rZS50EknHy2JS+WXvhkAV6m6gAxZwDJJEbvdOJQMM=",
+        "last_login": "2022-01-15T02:56:44.573Z",
+        "is_superuser": false,
+        "username": "jane",
+        "first_name": "",
+        "last_name": "",
+        "email": "jane@gmail.com",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2022-01-15T02:56:44.296Z",
+        "groups": [],
+        "user_permissions": [],
+        "following_set": []
+    }
+},
+{
+    "model": "network.user",
+    "fields": {
+        "password": "pbkdf2_sha256$260000$Z3cLp0oU1yr3tcjLUIK5HC$i9r5wUG6Qu9L/BkpnlxcQgEz0+i5XoUa7YTW79mlBdw=",
+        "last_login": "2022-01-15T02:57:09.344Z",
+        "is_superuser": false,
+        "username": "tom",
+        "first_name": "",
+        "last_name": "",
+        "email": "tom@gmail.com",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2022-01-15T02:57:09.045Z",
+        "groups": [],
+        "user_permissions": [],
+        "following_set": []
+    }
+}
+]
