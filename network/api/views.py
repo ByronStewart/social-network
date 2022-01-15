@@ -9,7 +9,38 @@ from django.http.response import JsonResponse
 from django.http import HttpRequest
 from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
+from django.views.generic import View
 
+class PostsListCreateApiView(View):
+    def get(self, request: HttpRequest):
+        """ retrieves all posts """
+        posts = Post.objects.all()
+
+        offset = request.GET.get('offset', 0)
+        user_id = request.GET.get('user_id', None)
+
+        if user_id:
+            posts = posts.filter(creator=user_id)
+
+        return JsonResponse(paginated_posts(posts, int(offset), request))
+
+    def post(self, request: HttpRequest):
+        """ creates posts """
+        pass
+
+    
+class PostRetrieveUpdateDestroyView(View):
+    def get(self, request: HttpRequest):
+        """ retrieves single post """
+        pass
+
+    def put(self, request: HttpRequest):
+        """ updates a post"""
+        pass
+
+    def delete(self, request: HttpRequest):
+        """ deletes a post """
+        pass
 
 @csrf_exempt
 @login_required

@@ -12,3 +12,7 @@ media
 
 # Backup files # 
 *.bak 
+
+# Cypress #
+cypress/videos
+cypress/screenshots

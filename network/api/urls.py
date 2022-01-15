@@ -4,7 +4,7 @@ from . import views
 
 app_name = "api"
 urlpatterns = [
-    path("posts", views.allPosts, name="all-posts"),
+    path("posts", views.PostsListCreateApiView.as_view(), name="posts"),
     path("user/follow", views.toggleFollow, name="toggle-follow"),
     path("posts/<int:user_id>", views.postsByUser, name="user-posts"),
     path("posts/following", views.postsFollowing, name="user-posts"),
