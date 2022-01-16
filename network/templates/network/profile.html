@@ -1,35 +1,5 @@
 {% extends "network/layout.html" %}
-{% load static %}
 
 {% block body %}
-
-{% comment %} The profile section of the page {% endcomment %}
-
-<section class="narrow-container mx-auto mt-n3 p-3">
-  <h3>
-      {{profile.username}}'s Profile Page
-  </h3>
-  <div class="d-flex justify-content-start">
-      <p>Followers: <span id="follower-count">{{profile.follower_count}}</span></p>
-  
-      <p class="mx-3">Following: <span>{{profile.follow_count}}</span></p>
-  </div>
-  {% if user.is_authenticated %}
-    {% if user != profile %}
-      {% if is_followed %}
-        <button id="follow-btn" class="btn btn-dark btn-lg" data-follow-status="true">Unfollow</button>
-      {% else %}
-        <button id="follow-btn" class="btn btn-dark btn-lg" data-follow-status="false">Follow</button>
-      {% endif %}
-    {% endif %}
-  {% endif %}
-  <hr>
-</section>
-
-{% comment %} 
-  the posts of the user, will be rendered with js
-{% endcomment %}
-{% endblock %}
-{% block scripts %}
-<script src="{% static 'network/js/profile.js' %}"></script>
-{% endblock scripts %}
+TODO
+{% endblock body %}

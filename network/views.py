@@ -1,41 +1,28 @@
-import json
-from network.services import get_profile_context
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
-from django.http.response import JsonResponse
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import render
 from django.urls import reverse
-from django.contrib.auth.decorators import login_required
-from django.views.decorators.csrf import csrf_exempt
+from django.views.generic import TemplateView
 
 
-from .models import Post, User
+from .models import User
 
 
-def index(request):
-    """ 
-        Will return a page with a form to create a new post
-    """
-    return render(request, "network/index.html")
+class IndexView(TemplateView):
+    template_name = "network/index.html"
+
+class ProfileView(TemplateView):
+    template_name = "network/profile.html"
+
+class FollowingView(TemplateView):
+    template_name = "network/following.html"
 
 
-def profile(request, pk):
-    """ 
-        Will return the profile information for the pk of the user
-    """
-    profile = get_object_or_404(User, pk=pk)
-    return render(request, "network/profile.html", get_profile_context(profile, request))
-
-
-@login_required
-def following(request):
-    """ Generic page with just filtered posts for the user"""
-    return render(request, "network/following.html")
 
 
 def login_view(request):
+    """ CS50 provided """
     if request.method == "POST":
 
         # Attempt to sign user in
@@ -56,11 +43,13 @@ def login_view(request):
 
 
 def logout_view(request):
+    """ CS50 provided """
     logout(request)
     return HttpResponseRedirect(reverse("index"))
 
 
 def register(request):
+    """ CS50 provided """
     if request.method == "POST":
         username = request.POST["username"]
         email = request.POST["email"]

@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "concurrently \"npm:watch-ts\" \"npm:watch-sass\" \"npm:server\"",
-    "watch-ts": "tsc -w",
+    "watch-ts": "tsc -w --preserveWatchOutput",
     "watch-sass": "sass -w network/src/sass:network/static/network/css",
     "cypress:open": "cypress open",
     "cypress:run": "cypress run",
