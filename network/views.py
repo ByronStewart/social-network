@@ -3,12 +3,10 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
-from django.views.generic import TemplateView, View
-from django.http import JsonResponse
-
-
-from .models import User
-
+from django.views.generic import TemplateView
+from .models import User, Post
+from .serializers import UserSerializer, PostSerializer
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 
 class IndexView(TemplateView):
     template_name = "network/index.html"
@@ -21,14 +19,13 @@ class ProfileView(TemplateView):
 class FollowingView(TemplateView):
     template_name = "network/following.html"
 
-# class PostListCreateAPIView(View):
-#     def get(self, req, *args, **kwargs):
-#         """ will get a list of all the posts """
-#         return JsonResponse({"message": "hi"})
+class PostListCreateAPIView(ListCreateAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
 
-#     def post(self, req, *args, **kwargs):
-#         """ will create a post to save to the database """
-#         return JsonResponse({"message": "hi"})
+    def perform_create(self, serializer):
+        serializer.save(creator=self.request.user)
+
 
 
 def login_view(request):
