@@ -35,7 +35,8 @@ class TestFollowingView(TestCase):
 
 class TestPostListCreateAPIView(TestCase):
     def setUp(self) -> None:
-        self.view = views.PostListCreateAPIView.as_view()
+        # self.view = views.PostListCreateAPIView.as_view()
+        pass
 
     def test_list_can_be_viewed_by_all_users(self):
         pass
