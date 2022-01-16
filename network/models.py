@@ -45,7 +45,7 @@ class Post(models.Model):
             'content': self.content,
             'created_at': self.created_at.strftime("%b %d %Y, %I:%M %p"),
             'likes': self.like_count
-        }
+        }  
         if request.user.is_authenticated:
             post["is_liked"] = self.is_liked(request)
         return post
