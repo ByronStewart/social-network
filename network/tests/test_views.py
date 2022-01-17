@@ -49,12 +49,25 @@ class TestPostListCreateAPIView(TestCase):
                          "Should be viewable by all users")
 
     def test_list_should_return_list_of_posts(self):
-        posts = []
-        for i in range(5):
-            posts.append(mixer.blend("network.Post"))
+        for _ in range(5):
+            mixer.blend("network.Post")
         req = APIRequestFactory().get("/")
         res = self.view(req)
-        self.assertEqual(len(res.data), 5)
+        self.assertEqual(res.data["count"], 5)
+
+    def test_list_should_limit_the_number_of_posts_to_10(self):
+        for _ in range(50):
+            mixer.blend("network.Post")
+        req = APIRequestFactory().get("/")
+        res = self.view(req)
+        self.assertEqual(len(res.data["results"]), 10)
+
+    def test_list_should_return_followed_posts_when_provided_query(self):
+        for _ in range(50):
+            mixer.blend("network.Post")
+        req = APIRequestFactory().get("/", {"followed": 1})
+        res = self.view(req)
+        self.assertEqual(len(res.data["results"]), 10)
 
     def test_authenticated_user_can_create_post(self):
         user = mixer.blend("network.User")
@@ -95,7 +108,7 @@ class TestPostRetrieveUpdateDestroyAPIView(TestCase):
         req = APIRequestFactory().put("/", data=new_post)
         res = self.view(req, pk=1)
         self.assertEqual(res.status_code, 403,
-                            "unauthenticated user cannot change post")
+                         "unauthenticated user cannot change post")
         user = mixer.blend("network.User")
         req = APIRequestFactory().put("/", data=new_post)
         force_authenticate(req, user=user)
@@ -120,12 +133,14 @@ class TestPostRetrieveUpdateDestroyAPIView(TestCase):
         req = APIRequestFactory().delete("/")
         force_authenticate(req, user=user)
         res = self.view(req, pk=1)
-        self.assertEqual(res.status_code, 204, "post should be able to be deleted")
+        self.assertEqual(res.status_code, 204,
+                         "post should be able to be deleted")
+
 
 class TestPostLikesAPIView(TestCase):
     def setUp(self):
         self.view = views.PostLikesAPIView.as_view()
-        self.user :User = mixer.blend("network.User")
+        self.user: User = mixer.blend("network.User")
 
         self.unauthenticated_post_request = APIRequestFactory().post("/")
         self.unauthenticated_delete_request = APIRequestFactory().delete("/")
@@ -136,20 +151,16 @@ class TestPostLikesAPIView(TestCase):
         self.authenticated_delete_request = APIRequestFactory().delete("/")
         force_authenticate(self.authenticated_delete_request, self.user)
 
-
-
     def test_endpoint_requires_pk(self):
         res = self.view(self.authenticated_post_request)
         self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
 
-    
     def test_endpoint_requires_auth(self):
         res = self.view(self.unauthenticated_post_request, pk=2)
         self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
 
         res = self.view(self.unauthenticated_delete_request, pk=2)
         self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
-
 
     def test_endpoint_returns_404_when_post_does_not_exist(self):
         res = self.view(self.authenticated_post_request, pk=1)
@@ -158,7 +169,6 @@ class TestPostLikesAPIView(TestCase):
         res = self.view(self.authenticated_delete_request, pk=1)
         self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
 
-
     def test_can_like_post(self):
         post = mixer.blend("network.Post", pk=1)
         response = self.view(self.authenticated_post_request, pk=1)
@@ -166,7 +176,7 @@ class TestPostLikesAPIView(TestCase):
         user = User.objects.get(pk=self.user.pk)
         post_is_liked = user.liked_posts_set.filter(pk=post.pk).exists()
         self.assertTrue(post_is_liked)
-    
+
     def test_can_unlike_post(self):
         post = mixer.blend("network.Post", pk=1)
         self.user.like(post)
@@ -174,5 +184,32 @@ class TestPostLikesAPIView(TestCase):
         response = self.view(self.authenticated_delete_request, pk=1)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertFalse(self.user.has_liked(post))
-     
-        
+
+
+class TestPostFollowedAPIView(TestCase):
+
+    def setUp(self):
+        self.view = views.PostFollowedAPIView.as_view()
+        self.user: User = mixer.blend("network.User")
+        self.authenticated_get_request = APIRequestFactory().get("/")
+        force_authenticate(self.authenticated_get_request, user=self.user)
+
+    def test_endpoint_requires_authentication(self):
+        unauthenticated_request = APIRequestFactory().get("/")
+        response = self.view(unauthenticated_request)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_posts_are_from_followed_users(self):
+        followed_user1 = mixer.blend("network.User")
+        followed_user2 = mixer.blend("network.User")
+        self.user.following_set.add(followed_user1, followed_user2)
+        for _ in range(14):
+            mixer.blend("network.Post", owner=followed_user1)
+            mixer.blend("network.Post", owner=followed_user2)
+            mixer.blend("network.Post")
+        response = self.view(self.authenticated_get_request)
+        results = response.data["results"]
+        for result in results:
+            self.assertIn(result["owner"], [
+                          followed_user1.username, followed_user2.username],
+                          "all posts returned are from followed users")

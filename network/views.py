@@ -6,13 +6,14 @@ from django.urls import reverse
 from django.views.generic import TemplateView
 from .models import User, Post
 from .serializers import UserSerializer, PostSerializer
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 from rest_framework import status
 from .permissions import IsOwnerOrReadOnly
+
 
 class IndexView(TemplateView):
     template_name = "network/index.html"
@@ -31,7 +32,7 @@ class PostListCreateAPIView(ListCreateAPIView):
     serializer_class = PostSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
 
-    def perform_create(self, serializer):
+    def perform_create(self, serializer: PostSerializer):
         serializer.save(owner=self.request.user)
 
 
@@ -41,11 +42,23 @@ class PostRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     permission_classes = [IsOwnerOrReadOnly]
 
 
+class PostFollowedAPIView(ListAPIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = PostSerializer
+    queryset = Post.objects.all()
+
+    def get_queryset(self):
+        return Post.objects.filter(
+            owner__in=self.request.user.following_set.all()
+        )
+
+
 class PostLikesAPIView(APIView):
     serializer_class = PostSerializer
     permission_classes = (IsAuthenticated,)
-    def post(self, request, pk=None):
-        user : User = self.request.user
+
+    def post(self, _, pk=None):
+        user: User = self.request.user
         try:
             post = Post.objects.get(pk=pk)
         except Post.DoesNotExist:
@@ -55,18 +68,16 @@ class PostLikesAPIView(APIView):
         serializer = self.serializer_class(post)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-
-    def delete(self, request, pk=None):
-        user : User = self.request.user
+    def delete(self, _, pk=None):
+        user: User = self.request.user
         try:
             post = Post.objects.get(pk=pk)
         except Post.DoesNotExist:
             raise NotFound('The post with this id was not found')
-        
+
         user.unlike(post)
         serializer = self.serializer_class(post)
         return Response(serializer.data, status=status.HTTP_200_OK)
-
 
 
 def login_view(request):

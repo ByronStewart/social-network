@@ -46,3 +46,5 @@ class Post(models.Model):
     def is_liked_by(self, user: User):
         return self.liked_by_set.filter(pk=user.pk).exists()
 
+    class Meta:
+        ordering = ['-created_at']
