@@ -34,6 +34,18 @@ class User(AbstractUser):
         """ returns True if user has liked 'post'; else False """
         return self.liked_posts_set.filter(pk=post.pk).exists()
 
+    def has_followed(self, user):
+        """ returns True if the user has followed 'user'; else False """
+        return self.following_set.filter(pk=user.pk).exists()
+
+    def follow(self, user):
+        """ follow a user 'user' """
+        return self.following_set.add(user)
+
+    def unfollow(self, user):
+        """ follow a user 'user' """
+        return self.following_set.remove(user)
+
 class Post(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     content = models.TextField()

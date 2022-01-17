@@ -35,6 +35,12 @@ class PostListCreateAPIView(ListCreateAPIView):
     def perform_create(self, serializer: PostSerializer):
         serializer.save(owner=self.request.user)
 
+    def get_queryset(self):
+        queried_user = self.request.query_params.get("user", None)
+        if queried_user is not None:
+            return Post.objects.filter(owner__id=queried_user)
+        return super().get_queryset()
+
 
 class PostRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     queryset = Post.objects.all()
@@ -53,6 +59,31 @@ class PostFollowedAPIView(ListAPIView):
         )
 
 
+class UserFollowAPIView(APIView):
+    serializer_class = UserSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, _, pk=None):
+        try:
+            user_to_follow = User.objects.get(pk=pk)
+        except User.DoesNotExist:
+            raise NotFound('User not found')
+
+        self.request.user.follow(user_to_follow)
+        serializer = self.serializer_class(user_to_follow)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def delete(self, _, pk=None):
+        try:
+            user_to_unfollow = User.objects.get(pk=pk)
+        except User.DoesNotExist:
+            raise NotFound("User not found")
+
+        self.request.user.unfollow(user_to_unfollow)
+        serializer = self.serializer_class(user_to_unfollow)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 class PostLikesAPIView(APIView):
     serializer_class = PostSerializer
     permission_classes = (IsAuthenticated,)
@@ -62,7 +93,7 @@ class PostLikesAPIView(APIView):
         try:
             post = Post.objects.get(pk=pk)
         except Post.DoesNotExist:
-            raise NotFound('The post with this id was not found')
+            raise NotFound('Post not found')
 
         user.like(post)
         serializer = self.serializer_class(post)
@@ -73,7 +104,7 @@ class PostLikesAPIView(APIView):
         try:
             post = Post.objects.get(pk=pk)
         except Post.DoesNotExist:
-            raise NotFound('The post with this id was not found')
+            raise NotFound('Post not found')
 
         user.unlike(post)
         serializer = self.serializer_class(post)

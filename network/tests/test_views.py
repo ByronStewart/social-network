@@ -62,12 +62,14 @@ class TestPostListCreateAPIView(TestCase):
         res = self.view(req)
         self.assertEqual(len(res.data["results"]), 10)
 
-    def test_list_should_return_followed_posts_when_provided_query(self):
-        for _ in range(50):
+    def test_list_should_only_return_posts_from_user_when_provided_query(self):
+        user = mixer.blend("network.User")
+        for _ in range(5):
+            mixer.blend("network.Post", owner=user)
             mixer.blend("network.Post")
-        req = APIRequestFactory().get("/", {"followed": 1})
+        req = APIRequestFactory().get("/", {"user": user.id})
         res = self.view(req)
-        self.assertEqual(len(res.data["results"]), 10)
+        self.assertEqual(len(res.data["results"]), 5)
 
     def test_authenticated_user_can_create_post(self):
         user = mixer.blend("network.User")
@@ -173,9 +175,7 @@ class TestPostLikesAPIView(TestCase):
         post = mixer.blend("network.Post", pk=1)
         response = self.view(self.authenticated_post_request, pk=1)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        user = User.objects.get(pk=self.user.pk)
-        post_is_liked = user.liked_posts_set.filter(pk=post.pk).exists()
-        self.assertTrue(post_is_liked)
+        self.assertTrue(self.user.has_liked(post))
 
     def test_can_unlike_post(self):
         post = mixer.blend("network.Post", pk=1)
@@ -213,3 +213,50 @@ class TestPostFollowedAPIView(TestCase):
             self.assertIn(result["owner"], [
                           followed_user1.username, followed_user2.username],
                           "all posts returned are from followed users")
+
+
+class TestUserFollowAPIView(TestCase):
+    def setUp(self):
+        self.view = views.UserFollowAPIView.as_view()
+        self.user: User = mixer.blend("network.User", id=43)
+
+        self.unauthenticated_post_request = APIRequestFactory().post("/")
+        self.unauthenticated_delete_request = APIRequestFactory().delete("/")
+
+        self.authenticated_post_request = APIRequestFactory().post("/")
+        force_authenticate(self.authenticated_post_request, self.user)
+
+        self.authenticated_delete_request = APIRequestFactory().delete("/")
+        force_authenticate(self.authenticated_delete_request, self.user)
+
+    def test_endpoint_requires_pk(self):
+        res = self.view(self.authenticated_post_request)
+        self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_endpoint_requires_auth(self):
+        res = self.view(self.unauthenticated_post_request, pk=2)
+        self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
+
+        res = self.view(self.unauthenticated_delete_request, pk=2)
+        self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_endpoint_returns_404_when_user_does_not_exist(self):
+        response = self.view(self.authenticated_post_request, pk=1)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+        response = self.view(self.authenticated_delete_request, pk=1)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_can_follow_user(self):
+        user_to_follow = mixer.blend("network.User", pk=1)
+        response = self.view(self.authenticated_post_request, pk=1)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertTrue(self.user.has_followed(user_to_follow))
+
+    def test_can_unfollow_user(self):
+        user_to_unfollow = mixer.blend("network.User", pk=1)
+        self.user.follow(user_to_unfollow)
+        self.assertTrue(self.user.has_followed(user_to_unfollow))
+        response = self.view(self.authenticated_delete_request, pk=1)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertFalse(self.user.has_followed(user_to_unfollow))
