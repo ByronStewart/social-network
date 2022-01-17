@@ -22,6 +22,18 @@ class User(AbstractUser):
     def following_count(self):
         return self.following_set.count()
 
+    def like(self, post):
+        """ like a post if we have not already liked it """
+        self.liked_posts_set.add(post)
+
+    def unlike(self, post):
+        """ unlike a post if we have already liked it """
+        self.liked_posts_set.remove(post)
+
+    def has_liked(self, post):
+        """ returns True if user has liked 'post'; else False """
+        return self.liked_posts_set.filter(pk=post.pk).exists()
+
 class Post(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     content = models.TextField()

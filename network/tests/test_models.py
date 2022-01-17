@@ -24,7 +24,7 @@ class TestUserModel(TestCase):
     def test_user_can_like_post(self):
         user = mixer.blend("network.User")
         post = mixer.blend("network.Post")
-        user.liked_posts_set.add(post)
+        user.like(post)
         self.assertEqual(post.like_count, 1)
 
 class TestPostModel(TestCase):
