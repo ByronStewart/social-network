@@ -7,6 +7,8 @@ from django.views.generic import TemplateView
 from .models import User, Post
 from .serializers import UserSerializer, PostSerializer
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework import permissions
+
 
 class IndexView(TemplateView):
     template_name = "network/index.html"
@@ -19,13 +21,19 @@ class ProfileView(TemplateView):
 class FollowingView(TemplateView):
     template_name = "network/following.html"
 
+
 class PostListCreateAPIView(ListCreateAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     def perform_create(self, serializer):
-        serializer.save(creator=self.request.user)
+        serializer.save(owner=self.request.user)
 
+
+class PostRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
 
 
 def login_view(request):

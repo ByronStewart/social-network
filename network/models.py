@@ -23,7 +23,7 @@ class User(AbstractUser):
         return self.following_set.count()
 
 class Post(models.Model):
-    creator = models.ForeignKey(User, on_delete=models.CASCADE)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
     content = models.TextField()
     created_at = models.DateTimeField(default=timezone.now)
 
