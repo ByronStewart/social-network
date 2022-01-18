@@ -10,7 +10,9 @@
     "cypress:open": "cypress open",
     "cypress:run": "cypress run",
     "server": "python manage.py runserver",
-    "flush-db": "python manage.py flush --no-input"
+    "flush-db": "python manage.py flush --no-input",
+    "coverage": "coverage run --source=\".\" manage.py test && coverage report"
+
   },
   "repository": {
     "type": "git",

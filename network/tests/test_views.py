@@ -175,7 +175,7 @@ class TestPostLikesAPIView(TestCase):
         post = mixer.blend("network.Post", pk=1)
         response = self.view(self.authenticated_post_request, pk=1)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertTrue(self.user.has_liked(post))
+        self.assertTrue(response.data["is_liked"])
 
     def test_can_unlike_post(self):
         post = mixer.blend("network.Post", pk=1)
@@ -183,7 +183,7 @@ class TestPostLikesAPIView(TestCase):
         self.assertTrue(self.user.has_liked(post))
         response = self.view(self.authenticated_delete_request, pk=1)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertFalse(self.user.has_liked(post))
+        self.assertFalse(response.data["is_liked"])
 
 
 class TestPostFollowedAPIView(TestCase):

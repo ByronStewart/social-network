@@ -1,6 +1,6 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django.views.generic import TemplateView
@@ -96,7 +96,7 @@ class PostLikesAPIView(APIView):
             raise NotFound('Post not found')
 
         user.like(post)
-        serializer = self.serializer_class(post)
+        serializer = self.serializer_class(post, context={'request':self.request})
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def delete(self, _, pk=None):
@@ -107,7 +107,7 @@ class PostLikesAPIView(APIView):
             raise NotFound('Post not found')
 
         user.unlike(post)
-        serializer = self.serializer_class(post)
+        serializer = self.serializer_class(post, context={'request':self.request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 

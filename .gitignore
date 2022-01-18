@@ -13,6 +13,8 @@ media
 # Backup files # 
 *.bak 
 
+.coverage
+
 # Cypress #
 cypress/videos
 cypress/screenshots
