@@ -1,5 +1,6 @@
 from unittest import skip
 from django.test import TestCase, RequestFactory
+from django.contrib.auth.models import AnonymousUser
 from rest_framework.test import APIRequestFactory, force_authenticate
 from mixer.backend.django import mixer
 from rest_framework import status
@@ -15,27 +16,76 @@ class TestSanity(TestCase):
 
 
 class TestIndexView(TestCase):
+    def setUp(self):
+        self.view = views.IndexView.as_view()
+
     def test_can_be_viewed_by_all_users(self):
         req = RequestFactory().get("/")
         res = views.IndexView.as_view()(req)
         self.assertEqual(res.status_code, 200,
                          "Should be viewable by all users")
 
+    def test_contains_posts(self):
+        for _ in range(5):
+            mixer.blend("network.Post")
+        request = RequestFactory().get("/")
+        response = self.view(request)
+        self.assertEqual(len(response.context_data["object_list"]), 5)
+    
+    def test_paginates_posts_by_10(self):
+        for _ in range(15):
+            mixer.blend("network.Post")
+        request = RequestFactory().get("/")
+        response = self.view(request)
+        self.assertEqual(len(response.context_data["object_list"]), 10)
+    
 
-class TestProfileView(TestCase):
+class TestProfileDetailView(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.view = views.ProfileDetailView.as_view()
+        cls.user = mixer.blend("network.User", id=1)
+
     def test_can_be_viewed_by_all_users(self):
-        req = RequestFactory().get("/")
-        res = views.ProfileView.as_view()(req)
-        self.assertEqual(res.status_code, 200,
+        request = RequestFactory().get("/")
+        request.user = self.user
+        response = self.view(request, pk=1)
+        self.assertEqual(response.status_code, 200,
                          "Should be viewable by all users")
+
+    def test_view_contains_list_of_posts(self):
+        for _ in range(5):
+            mixer.blend("network.Post", owner=self.user)
+        request = RequestFactory().get("/")
+        request.user = self.user
+        response = self.view(request, pk=1)
+        self.assertEqual(len(response.context_data["post_list"]), 5)
+    
+    def test_paginates_posts_by_10(self):
+        for _ in range(15):
+            mixer.blend("network.Post", owner=self.user)
+        request = RequestFactory().get("/")
+        response = self.view(request, pk=1)
+        self.assertEqual(len(response.context_data["post_list"]), 10)
+
+    def test_filters_posts_by_user(self):
+        for _ in range(3):
+            mixer.blend("network.Post", owner=self.user)
+            mixer.blend("network.Post")
+        request = RequestFactory().get("/")
+        response = self.view(request, pk=1)
+        self.assertEqual(len(response.context_data["object_list"]), 3)
 
 
 class TestFollowingView(TestCase):
-    def test_can_be_viewed_by_all_users(self):
-        req = RequestFactory().get("/")
-        res = views.FollowingView.as_view()(req)
-        self.assertEqual(res.status_code, 200,
-                         "Should be viewable by all users")
+    def test_user_must_be_logged_in(self):
+        request = RequestFactory().get("/")
+        request.user = AnonymousUser()
+        response = views.FollowingView.as_view()(request)
+        self.assertEqual(response.status_code, 302,
+                         "Should redirect")
+        self.assertRegex(response.url, "login")
+        return
 
 
 class TestPostListCreateAPIView(TestCase):

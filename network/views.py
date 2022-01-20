@@ -3,7 +3,11 @@ from django.db import IntegrityError
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, ListView
+from django.views.generic.detail import SingleObjectMixin
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 from .models import User, Post
 from .serializers import UserSerializer, PostSerializer
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView
@@ -14,17 +18,43 @@ from rest_framework.response import Response
 from rest_framework import status
 from .permissions import IsOwnerOrReadOnly
 
-
-class IndexView(TemplateView):
+class IndexView(ListView):
     template_name = "network/index.html"
+    queryset = Post.objects.all()
+    paginate_by = 10
 
 
-class ProfileView(TemplateView):
+class ProfileDetailView(ListView, SingleObjectMixin):
+    paginate_by = 10
     template_name = "network/profile.html"
 
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object(queryset=User.objects.all())
+        return super().get(request, *args, **kwargs)
 
-class FollowingView(TemplateView):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['user'] = self.object
+        return context
+    
+    def get_queryset(self):
+        return self.object.post_set.all()
+
+
+class FollowingView(ListView):
     template_name = "network/following.html"
+    queryset = Post.objects.all()
+    paginate_by = 10
+    
+    @method_decorator(login_required)
+    def get(self, *args, **kwargs):
+        return super.get(self, *args, **kwargs)
+
+    def get_queryset(self):
+        return Post.objects.filter(
+            owner__in=self.request.user.following_set.all()
+        )
+    
 
 
 class PostListCreateAPIView(ListCreateAPIView):
@@ -40,6 +70,9 @@ class PostListCreateAPIView(ListCreateAPIView):
         if queried_user is not None:
             return Post.objects.filter(owner__id=queried_user)
         return super().get_queryset()
+
+
+
 
 
 class PostRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):

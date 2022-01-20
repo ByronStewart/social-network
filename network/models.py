@@ -47,7 +47,9 @@ class User(AbstractUser):
         return self.following_set.remove(user)
 
 class Post(models.Model):
-    owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE,
+        related_name='post_set'
+    )
     content = models.TextField()
     created_at = models.DateTimeField(default=timezone.now)
 
