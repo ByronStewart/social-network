@@ -5,7 +5,7 @@ from . import views
 
 urlpatterns = [
     path("", views.IndexView.as_view(), name="index"),
-    path("api/posts", views.PostListCreateAPIView.as_view(), name="posts"),
+    path("api/posts", views.CreateAPIView.as_view(), name="posts"),
     path("api/posts/<int:pk>", views.PostRetrieveUpdateDestroyAPIView.as_view(), name="post"),
     path("api/posts/<int:pk>/like", views.PostLikesAPIView.as_view(), name="like-post"),
     path("api/posts/followed", views.PostFollowedAPIView.as_view(), name="followed"),

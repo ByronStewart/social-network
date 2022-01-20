@@ -10,7 +10,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from .models import User, Post
 from .serializers import UserSerializer, PostSerializer
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView
+from rest_framework.generics import RetrieveUpdateDestroyAPIView, ListAPIView, CreateAPIView
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from rest_framework.exceptions import NotFound
@@ -48,7 +48,7 @@ class FollowingView(ListView):
     
     @method_decorator(login_required)
     def get(self, *args, **kwargs):
-        return super.get(self, *args, **kwargs)
+        return super().get(self, *args, **kwargs)
 
     def get_queryset(self):
         return Post.objects.filter(
@@ -57,19 +57,23 @@ class FollowingView(ListView):
     
 
 
-class PostListCreateAPIView(ListCreateAPIView):
-    queryset = Post.objects.all()
+class CreateAPIView(CreateAPIView):
     serializer_class = PostSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer: PostSerializer):
         serializer.save(owner=self.request.user)
 
-    def get_queryset(self):
-        queried_user = self.request.query_params.get("user", None)
-        if queried_user is not None:
-            return Post.objects.filter(owner__id=queried_user)
-        return super().get_queryset()
+    def create(self, request, *args, **kwargs):
+        super().create(request, *args, **kwargs)
+        return HttpResponseRedirect(reverse("index"))
+
+    # def get_queryset(self):
+    #     queried_user = self.request.query_params.get("user", None)
+    #     if queried_user is not None:
+    #         return Post.objects.filter(owner__id=queried_user)
+    #     return super().get_queryset()
+
 
 
 

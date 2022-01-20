@@ -4,6 +4,7 @@ from django.contrib.auth.models import AnonymousUser
 from rest_framework.test import APIRequestFactory, force_authenticate
 from mixer.backend.django import mixer
 from rest_framework import status
+from django.urls import reverse
 
 from network.models import Post, User
 from .. import views
@@ -78,56 +79,45 @@ class TestProfileDetailView(TestCase):
 
 
 class TestFollowingView(TestCase):
-    def test_user_must_be_logged_in(self):
+
+    def test_unauthenticated_users_should_get_redirected_to_login(self):
         request = RequestFactory().get("/")
         request.user = AnonymousUser()
         response = views.FollowingView.as_view()(request)
         self.assertEqual(response.status_code, 302,
                          "Should redirect")
         self.assertRegex(response.url, "login")
-        return
+
+    
+    def test_should_display_posts_from_followed_users(self):
+        user : User = mixer.blend("network.User")
+        followed_user = mixer.blend("network.User")
+        user.follow(followed_user)
+        for _ in range(3):
+            mixer.blend("network.Post")
+            mixer.blend("network.Post", owner=followed_user)
+        request = RequestFactory().get("/")
+        request.user = user
+        response = views.FollowingView.as_view()(request)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.context_data["object_list"]), 3)
 
 
-class TestPostListCreateAPIView(TestCase):
+
+class CreateAPIView(TestCase):
     def setUp(self) -> None:
-        self.view = views.PostListCreateAPIView.as_view()
+        self.view = views.CreateAPIView.as_view()
 
-    def test_list_can_be_viewed_by_all_users(self):
-        req = APIRequestFactory().get("/")
-        res = self.view(req)
-        self.assertEqual(res.status_code, 200,
-                         "Should be viewable by all users")
 
-    def test_list_should_return_list_of_posts(self):
-        for _ in range(5):
-            mixer.blend("network.Post")
-        req = APIRequestFactory().get("/")
-        res = self.view(req)
-        self.assertEqual(res.data["count"], 5)
-
-    def test_list_should_limit_the_number_of_posts_to_10(self):
-        for _ in range(50):
-            mixer.blend("network.Post")
-        req = APIRequestFactory().get("/")
-        res = self.view(req)
-        self.assertEqual(len(res.data["results"]), 10)
-
-    def test_list_should_only_return_posts_from_user_when_provided_query(self):
-        user = mixer.blend("network.User")
-        for _ in range(5):
-            mixer.blend("network.Post", owner=user)
-            mixer.blend("network.Post")
-        req = APIRequestFactory().get("/", {"user": user.id})
-        res = self.view(req)
-        self.assertEqual(len(res.data["results"]), 5)
-
-    def test_authenticated_user_can_create_post(self):
+    def test_authenticated_user_can_create_post_and_get_redirected_to_index_page(self):
         user = mixer.blend("network.User")
         req = APIRequestFactory().post(
             "/", data={"content": "hello"}, format='json')
         force_authenticate(req, user=user)
         res = self.view(req)
-        self.assertEqual(res.status_code, 201)
+        self.assertEqual(Post.objects.all().count(), 1, "should create post in the database")
+        self.assertEqual(res.status_code, 302)
+        self.assertEqual(res.url, reverse("index"), "url should match the index page")
 
     def test_anonymous_user_cannot_create_post(self):
         user = mixer.blend("network.User")
