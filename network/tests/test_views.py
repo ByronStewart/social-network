@@ -22,6 +22,7 @@ class TestIndexView(TestCase):
 
     def test_can_be_viewed_by_all_users(self):
         req = RequestFactory().get("/")
+        req.user = AnonymousUser()
         res = views.IndexView.as_view()(req)
         self.assertEqual(res.status_code, 200,
                          "Should be viewable by all users")
@@ -30,6 +31,7 @@ class TestIndexView(TestCase):
         for _ in range(5):
             mixer.blend("network.Post")
         request = RequestFactory().get("/")
+        request.user = AnonymousUser()
         response = self.view(request)
         self.assertEqual(len(response.context_data["object_list"]), 5)
     
@@ -37,9 +39,20 @@ class TestIndexView(TestCase):
         for _ in range(15):
             mixer.blend("network.Post")
         request = RequestFactory().get("/")
+        request.user = AnonymousUser()
         response = self.view(request)
         self.assertEqual(len(response.context_data["object_list"]), 10)
     
+    def test_adds_isliked_to_each_post(self):
+        user : User = mixer.blend("network.User")
+        for _ in range(15):
+            post = mixer.blend("network.Post")
+            user.like(post)
+        request = RequestFactory().get("/")
+        request.user = user
+        response = self.view(request)
+        for post in response.context_data["object_list"]:
+            self.assertTrue(post.is_liked)
 
 class TestProfileDetailView(TestCase):
     @classmethod
@@ -66,6 +79,7 @@ class TestProfileDetailView(TestCase):
         for _ in range(15):
             mixer.blend("network.Post", owner=self.user)
         request = RequestFactory().get("/")
+        request.user = AnonymousUser()
         response = self.view(request, pk=1)
         self.assertEqual(len(response.context_data["post_list"]), 10)
 
@@ -74,9 +88,19 @@ class TestProfileDetailView(TestCase):
             mixer.blend("network.Post", owner=self.user)
             mixer.blend("network.Post")
         request = RequestFactory().get("/")
+        request.user = AnonymousUser()
         response = self.view(request, pk=1)
         self.assertEqual(len(response.context_data["object_list"]), 3)
 
+    def test_adds_isliked_to_each_post(self):
+        for _ in range(15):
+            post = mixer.blend("network.Post")
+            self.user.like(post)
+        request = RequestFactory().get("/")
+        request.user = self.user
+        response = self.view(request, pk=1)
+        for post in response.context_data["object_list"]:
+            self.assertTrue(post.is_liked)
 
 class TestFollowingView(TestCase):
 

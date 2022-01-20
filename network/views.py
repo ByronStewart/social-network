@@ -18,11 +18,23 @@ from rest_framework.response import Response
 from rest_framework import status
 from .permissions import IsOwnerOrReadOnly
 
+
 class IndexView(ListView):
     template_name = "network/index.html"
     queryset = Post.objects.all()
     paginate_by = 10
 
+    def get_queryset(self):
+        queryset = Post.objects.all()        
+        for post in queryset:
+            if not self.request.user.is_authenticated:
+                post.is_liked = False
+                continue   
+            if self.request.user.has_liked(post):
+                post.is_liked = True
+            else:
+                post.is_liked = False
+        return queryset 
 
 class ProfileDetailView(ListView, SingleObjectMixin):
     paginate_by = 10
@@ -38,7 +50,17 @@ class ProfileDetailView(ListView, SingleObjectMixin):
         return context
     
     def get_queryset(self):
-        return self.object.post_set.all()
+        queryset = self.object.post_set.all()
+        for post in queryset:
+            if not self.request.user.is_authenticated:
+                post.is_liked = False
+                continue   
+            if self.request.user.has_liked(post):
+                post.is_liked = True
+            else:
+                post.is_liked = False
+        return queryset 
+
 
 
 class FollowingView(ListView):
@@ -51,10 +73,18 @@ class FollowingView(ListView):
         return super().get(self, *args, **kwargs)
 
     def get_queryset(self):
-        return Post.objects.filter(
+        queryset = Post.objects.filter(
             owner__in=self.request.user.following_set.all()
         )
-    
+        for post in queryset:
+            if not self.request.user.is_authenticated:
+                post.is_liked = False
+                continue   
+            if self.request.user.has_liked(post):
+                post.is_liked = True
+            else:
+                post.is_liked = False
+        return queryset 
 
 
 class CreateAPIView(CreateAPIView):

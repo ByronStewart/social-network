@@ -57,6 +57,7 @@ class Post(models.Model):
     def like_count(self):
         return self.liked_by_set.count()
 
+
     def is_liked_by(self, user: User):
         return self.liked_by_set.filter(pk=user.pk).exists()
 

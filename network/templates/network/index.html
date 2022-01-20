@@ -1,8 +1,9 @@
 {% extends "network/layout.html" %} 
+{% load static %}
 {% block body %}
 
 {% if user.is_authenticated %}
-    <form action="/api/posts" method="post">
+    <form action="{% url 'posts' %}" method="post">
         {% csrf_token %}
         <input type="text" name="content" id="content">
         <button type="submit">Submit</button>
@@ -10,8 +11,21 @@
 {% endif %}
 
 {% for post in object_list %}
-<p>{{post.owner}} id {{post.id}} said {{post.content}} on {{post.created_at}}</p>
-{% comment %} TODO find out what is included on the model {% endcomment %} 
+<div class="border">
+  <div>
+    <a href="{% url 'profile' post.owner.id %}">{{post.owner}}</a>
+     id {{post.id}}
+  </div>
+  <p> said {{post.content}} on {{post.created_at}}</p>
+  <p id="post-{{post.id}}-like-count">{{post.like_count}}</p>
+  <button id="like-post-{{post.id}}" data-postId={{post.id}} data-likedStatus={{post.is_liked|lower}}>
+    {% if post.is_liked %}
+      Unlike
+    {% else %}
+      Like
+    {% endif %}
+  </button>
+</div>
 {% endfor %}
 
 <div class="pagination">
@@ -30,3 +44,7 @@
   </span>
 </div>
 {% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/like_post.js' %}"></script>
+{% endblock scripts %}
