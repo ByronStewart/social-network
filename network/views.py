@@ -12,7 +12,7 @@ from .models import User, Post
 from .serializers import UserSerializer, PostSerializer
 from rest_framework.generics import RetrieveUpdateDestroyAPIView, ListAPIView, CreateAPIView
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 from rest_framework import status
@@ -40,15 +40,14 @@ class ProfileDetailView(ListView, SingleObjectMixin):
     paginate_by = 10
     template_name = "network/profile.html"
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request, pk, *args, **kwargs):
         self.object = self.get_object(queryset=User.objects.all())
+        if not self.request.user.is_authenticated:
+            self.object.is_followed = False 
+        else:
+            self.object.is_followed = self.request.user.has_followed(pk=pk)
         return super().get(request, *args, **kwargs)
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['user'] = self.object
-        return context
-    
     def get_queryset(self):
         queryset = self.object.post_set.all()
         for post in queryset:
@@ -137,7 +136,7 @@ class UserFollowAPIView(APIView):
             raise NotFound('User not found')
 
         self.request.user.follow(user_to_follow)
-        serializer = self.serializer_class(user_to_follow)
+        serializer = self.serializer_class(user_to_follow, context={'request':self.request})
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def delete(self, _, pk=None):
@@ -147,7 +146,7 @@ class UserFollowAPIView(APIView):
             raise NotFound("User not found")
 
         self.request.user.unfollow(user_to_unfollow)
-        serializer = self.serializer_class(user_to_unfollow)
+        serializer = self.serializer_class(user_to_unfollow, context={'request':self.request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 

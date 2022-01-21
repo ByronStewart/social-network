@@ -24,7 +24,18 @@ class PostSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
+
+    is_followed = serializers.SerializerMethodField()
+
+    def get_is_followed(self, instance):
+        request = self.context.get('request', None)
+
+        if request is None:
+            return False
+        if not request.user.is_authenticated:
+            return False
+        return request.user.has_followed(instance)
     class Meta:
         model = User
-        fields = ('id', 'username', 'follower_count', 'following_count')
+        fields = ('id', 'username', 'follower_count', 'following_count', 'is_followed')
         read_only_fields = ('username',)

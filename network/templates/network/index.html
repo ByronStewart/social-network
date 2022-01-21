@@ -9,42 +9,10 @@
         <button type="submit">Submit</button>
     </form>
 {% endif %}
+{% include "network/components/post_list.html" %}
+{% include "network/components/paginator.html" %}
 
-{% for post in object_list %}
-<div class="border">
-  <div>
-    <a href="{% url 'profile' post.owner.id %}">{{post.owner}}</a>
-     id {{post.id}}
-  </div>
-  <p> said {{post.content}} on {{post.created_at}}</p>
-  <p id="post-{{post.id}}-like-count">{{post.like_count}}</p>
-  <button id="like-post-{{post.id}}" data-postId={{post.id}} data-likedStatus={{post.is_liked|lower}}>
-    {% if post.is_liked %}
-      Unlike
-    {% else %}
-      Like
-    {% endif %}
-  </button>
-</div>
-{% endfor %}
-
-<div class="pagination">
-  <span class="step-links">
-    {% if page_obj.has_previous %}
-    <a href="?page=1">&laquo; first</a>
-    <a href="?page={{page_obj.previous_page_number}}">previous</a>
-    {% endif %}
-    <span class="current"
-      >Page {{ page_obj.number }} of {{page_obj.paginator.num_pages}}
-    </span>
-    {% if page_obj.has_next %}
-    <a href="?page={{ page_obj.next_page_number }}">next</a>
-    <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
-    {% endif %}
-  </span>
-</div>
 {% endblock %}
 
 {% block scripts %}
-<script src="{% static 'js/like_post.js' %}"></script>
 {% endblock scripts %}

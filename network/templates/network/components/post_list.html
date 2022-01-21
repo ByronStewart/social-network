@@ -1,0 +1,31 @@
+{% for post in object_list %}
+
+<div class="border">
+  <div>
+    <a href="{% url 'profile' post.owner.id %}">{{post.owner}}</a>
+    id {{post.id}}
+  </div>
+  <div id="post-content-wrapper-{{post.id}}">
+    <p>said {{post.content}} on {{post.created_at}}</p>
+  </div>
+  <p>
+    like count:
+    <span id="post-{{post.id}}-like-count">{{post.like_count}}</span>
+  </p>
+  {% if user.is_authenticated %}
+  <button
+  id="like-post-{{post.id}}"
+  data-postId="{{post.id}}"
+  data-likedStatus="{{post.is_liked|lower}}"
+  >
+  {% if post.is_liked %} Unlike {% else %} Like {% endif %}
+  </button>
+  {% endif %}
+  {% if user.is_authenticated %}
+    {% if user == post.owner %}
+      <button id="post-edit-button-{{post.id}}" data-postId="{{post.id}}">Edit</button>
+    {% endif %} 
+  {% endif %}
+</div>
+
+{% endfor %}

@@ -34,9 +34,13 @@ class User(AbstractUser):
         """ returns True if user has liked 'post'; else False """
         return self.liked_posts_set.filter(pk=post.pk).exists()
 
-    def has_followed(self, user):
+    def has_followed(self, user=None, pk=None):
         """ returns True if the user has followed 'user'; else False """
-        return self.following_set.filter(pk=user.pk).exists()
+        if not user and not pk:
+            return False
+        if not pk:
+            return self.following_set.filter(pk=user.pk).exists()
+        return self.following_set.filter(pk=pk).exists()
 
     def follow(self, user):
         """ follow a user 'user' """

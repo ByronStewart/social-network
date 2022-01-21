@@ -58,7 +58,9 @@ class TestProfileDetailView(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.view = views.ProfileDetailView.as_view()
-        cls.user = mixer.blend("network.User", id=1)
+    
+    def setUp(self):
+        self.user : User = mixer.blend("network.User", id=1)
 
     def test_can_be_viewed_by_all_users(self):
         request = RequestFactory().get("/")
@@ -66,6 +68,24 @@ class TestProfileDetailView(TestCase):
         response = self.view(request, pk=1)
         self.assertEqual(response.status_code, 200,
                          "Should be viewable by all users")
+
+    def test_user_is_in_context(self):
+        request = RequestFactory().get("/")
+        request.user = self.user
+        response = self.view(request, pk=1)
+        self.assertIsInstance(response.context_data["user"], User)
+        self.assertIsInstance(response.context_data["object"], User)
+
+    def test_user_has_isfollowed_attribute(self):
+        followed_user = mixer.blend("network.User", id=2)
+        self.user.follow(followed_user)
+        request = RequestFactory().get("/")
+        request.user = self.user
+        response = self.view(request, pk=2)
+        self.assertTrue(response.context_data["user"].is_followed)
+        self.user.unfollow(followed_user)
+        response = self.view(request, pk=2)
+        self.assertFalse(response.context_data["user"].is_followed)
 
     def test_view_contains_list_of_posts(self):
         for _ in range(5):
@@ -293,6 +313,7 @@ class TestUserFollowAPIView(TestCase):
         self.authenticated_delete_request = APIRequestFactory().delete("/")
         force_authenticate(self.authenticated_delete_request, self.user)
 
+
     def test_endpoint_requires_pk(self):
         res = self.view(self.authenticated_post_request)
         self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
@@ -316,6 +337,7 @@ class TestUserFollowAPIView(TestCase):
         response = self.view(self.authenticated_post_request, pk=1)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertTrue(self.user.has_followed(user_to_follow))
+        self.assertTrue(response.data["is_followed"])
 
     def test_can_unfollow_user(self):
         user_to_unfollow = mixer.blend("network.User", pk=1)
@@ -324,3 +346,4 @@ class TestUserFollowAPIView(TestCase):
         response = self.view(self.authenticated_delete_request, pk=1)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertFalse(self.user.has_followed(user_to_unfollow))
+        self.assertFalse(response.data["is_followed"])

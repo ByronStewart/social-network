@@ -1,5 +1,22 @@
 {% extends "network/layout.html" %}
 
 {% block body %}
-TODO
+<h1>Profile Page</h1>
+
+{% comment %} Profile Component {% endcomment %}
+<div class="border mb-3 p-3">
+  <p>{{object.username}} id: {{object.pk}}</p>
+  <p>has <span id="follower-count">{{object.follower_count}}</span> followers</p>
+  <p>is following {{object.following_count}} users</p>
+  <div>
+    <button id="follow-user" data-userid="{{object.pk}}" data-followed-status="{{object.is_followed|lower}}">
+      {% if object.is_followed %}Unfollow{% else %}Follow{% endif %}
+    </button>
+  </div>
+</div>
+
+{% comment %} End Profile Component {% endcomment %}
+
+{% include "network/components/post_list.html" %}
+{% include "network/components/paginator.html" %}
 {% endblock body %}
