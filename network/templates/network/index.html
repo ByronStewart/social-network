@@ -5,7 +5,7 @@
 {% if user.is_authenticated %}
     <form action="{% url 'posts' %}" method="post">
         {% csrf_token %}
-        <input type="text" name="content" id="content">
+        <input type="text" name="content" id="content" required autofocus pattern="^(?!\s*$).+">
         <button type="submit">Submit</button>
     </form>
 {% endif %}

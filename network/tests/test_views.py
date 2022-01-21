@@ -1,4 +1,5 @@
 from unittest import skip
+from django.http import response
 from django.test import TestCase, RequestFactory
 from django.contrib.auth.models import AnonymousUser
 from rest_framework.test import APIRequestFactory, force_authenticate
@@ -73,7 +74,7 @@ class TestProfileDetailView(TestCase):
         request = RequestFactory().get("/")
         request.user = self.user
         response = self.view(request, pk=1)
-        self.assertIsInstance(response.context_data["user"], User)
+        self.assertIsInstance(response.context_data["object"], User)
         self.assertIsInstance(response.context_data["object"], User)
 
     def test_user_has_isfollowed_attribute(self):
@@ -82,10 +83,10 @@ class TestProfileDetailView(TestCase):
         request = RequestFactory().get("/")
         request.user = self.user
         response = self.view(request, pk=2)
-        self.assertTrue(response.context_data["user"].is_followed)
+        self.assertTrue(response.context_data["object"].is_followed)
         self.user.unfollow(followed_user)
         response = self.view(request, pk=2)
-        self.assertFalse(response.context_data["user"].is_followed)
+        self.assertFalse(response.context_data["object"].is_followed)
 
     def test_view_contains_list_of_posts(self):
         for _ in range(5):
@@ -347,3 +348,8 @@ class TestUserFollowAPIView(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertFalse(self.user.has_followed(user_to_unfollow))
         self.assertFalse(response.data["is_followed"])
+
+    def test_cannot_follow_self(self):
+        response = self.view(self.authenticated_post_request, pk=43)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertFalse(self.user.has_followed(self.user))

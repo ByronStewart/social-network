@@ -134,6 +134,9 @@ class UserFollowAPIView(APIView):
             user_to_follow = User.objects.get(pk=pk)
         except User.DoesNotExist:
             raise NotFound('User not found')
+        
+        if self.request.user == user_to_follow:
+            return Response({"detail": "user cannot follow themselves"}, status=status.HTTP_400_BAD_REQUEST)
 
         self.request.user.follow(user_to_follow)
         serializer = self.serializer_class(user_to_follow, context={'request':self.request})

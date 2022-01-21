@@ -9,9 +9,13 @@
   <p>has <span id="follower-count">{{object.follower_count}}</span> followers</p>
   <p>is following {{object.following_count}} users</p>
   <div>
-    <button id="follow-user" data-userid="{{object.pk}}" data-followed-status="{{object.is_followed|lower}}">
-      {% if object.is_followed %}Unfollow{% else %}Follow{% endif %}
-    </button>
+    {% if user.is_authenticated %}
+      {% if user != object %}
+        <button id="follow-user" data-userid="{{object.pk}}" data-followed-status="{{object.is_followed|lower}}">
+          {% if object.is_followed %}Unfollow{% else %}Follow{% endif %}
+        </button>
+      {% endif %}
+    {% endif %}
   </div>
 </div>
 
