@@ -78,13 +78,13 @@ describe("authenticated users", () => {
           .contains("my first post");
       });
 
-      it("should not be able to edit another users posts", () => {
+      it.only("should not be able to edit another users posts", () => {
         cy.get("#content").type("my first post{enter}");
         cy.get("#post-list-container")
           .children()
           .first()
           .contains("my first post");
-
+        cy.pause()
         cy.login("alice", "alice");
         cy.visit("/");
         cy.get("#post-list-container")
@@ -117,5 +117,18 @@ describe("authenticated users", () => {
       cy.visit("/users/4/profile");
       cy.contains("button", /(Follow|Unfollow)/).should("not.exist");
     });
+
+    it("should display no more than 10 posts", () => {
+      cy.login("joe", "joe");
+      cy.visit("/users/4/profile");
+      cy.get("#post-list-container").should("have.length.at.most", 10);
+    });
   });
+  context("following page", () => {
+    it("should display no more than 10 posts", () => {
+      cy.login("joe", "joe");
+      cy.visit("/users/4/profile");
+      cy.get("#post-list-container").should("have.length.at.most", 10);
+    });
+  })
 });

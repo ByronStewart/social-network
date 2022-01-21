@@ -97,17 +97,6 @@ class CreateAPIView(CreateAPIView):
         super().create(request, *args, **kwargs)
         return HttpResponseRedirect(reverse("index"))
 
-    # def get_queryset(self):
-    #     queried_user = self.request.query_params.get("user", None)
-    #     if queried_user is not None:
-    #         return Post.objects.filter(owner__id=queried_user)
-    #     return super().get_queryset()
-
-
-
-
-
-
 class PostRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer

@@ -2,17 +2,18 @@
   {% for post in object_list %}
   
   <div class="border">
-    <div>
+    <div class="mb-3">
       <a href="{% url 'profile' post.owner.id %}">{{post.owner}}</a>
       id {{post.id}}
     </div>
     <div id="post-content-wrapper-{{post.id}}">
-      <p>said {{post.content}} on {{post.created_at}}</p>
+      <p>said {{post.content}}</p>
     </div>
     <p>
       like count:
       <span id="post-{{post.id}}-like-count">{{post.like_count}}</span>
     </p>
+    <p>orginally posted at: {{post.created_at}}</p>
     {% if user.is_authenticated %}
     <button
     id="like-post-{{post.id}}"
