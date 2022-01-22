@@ -102,6 +102,22 @@ document.querySelectorAll('[id*="post-edit-button"]').forEach(btn => {
 })
 
 /**
+ * Cancel the form submission entry point
+ */
+document.querySelectorAll('[id*="cancel-edit"]').forEach(btn => {
+  btn.addEventListener("click", function () {
+    // reset the text area value to the post content
+    debugger
+    const id = this.getAttribute("data-postId")
+    const content = document.getElementById(`post-${id}-content`).innerText
+    const textArea = document.getElementById(`content-${id}`)
+    textArea.value = content
+    makeEditAreaVisible(null)    
+  })
+})
+
+
+/**
  * Edit post form submission entry point
  */
 document.querySelectorAll('[id*="edit-post-form"]').forEach((form) => {

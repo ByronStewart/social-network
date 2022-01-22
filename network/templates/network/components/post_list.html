@@ -15,9 +15,10 @@
     <div id="post-edit-wrapper-{{post.id}}" class="hidden">
       <form id="edit-post-form-{{post.id}}" data-postId="{{post.id}}">
         <textarea required name="content" id="content-{{post.id}}" cols="40" rows="2">{{post.content}}</textarea>
-        <button type="submit">Submit</button>
-        <button id="cancel-edit-{{post.id}}">Cancel</button>
+        <input type="submit" value="Submit">
+        <button id="cancel-edit-{{post.id}}" data-postId="{{post.id}}">Cancel</button>
       </form>
+      
     </div>
     {% endif %}
 
@@ -25,7 +26,7 @@
       like count:
       <span id="post-{{post.id}}-like-count">{{post.like_count}}</span>
     </p>
-    <p>orginally posted at: {{post.created_at}}</p>
+    <p>originally posted at: {{post.created_at}}</p>
     {% if user.is_authenticated %}
     <button
       id="like-post-{{post.id}}"
