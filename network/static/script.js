@@ -4,7 +4,8 @@
 document.querySelectorAll('[id*="like-post"]').forEach((elt) => {
   elt.addEventListener("click", async function () {
     const id = this.getAttribute("data-postid");
-    const isLiked = this.getAttribute("data-likedStatus") == "true" ? true : false;
+    const isLiked =
+      this.getAttribute("data-likedStatus") == "true" ? true : false;
     const post = await likePost(id, isLiked);
 
     // if the request returns an error do not change anything
@@ -15,7 +16,8 @@ document.querySelectorAll('[id*="like-post"]').forEach((elt) => {
     this.innerText = post.is_liked ? "unlike" : "like";
 
     // update the like count
-    document.getElementById(`post-${id}-like-count`).innerText = post.like_count;
+    document.getElementById(`post-${id}-like-count`).innerText =
+      post.like_count;
   });
 });
 
@@ -84,46 +86,78 @@ async function followUser(id, isFollowed) {
   }
 }
 
+
 /**
- * Edit post entry point
+ * Toggle editing of post entry point
  */
-document.querySelectorAll('[id*="post-edit-button"]').forEach((elt) => {
-  elt.addEventListener("click", async function () {
-    const id = this.getAttribute("data-postId");
-    const contentWrapper = document.getElementById(
-      `post-content-wrapper-${id}`
-    );
-    // clear the content element to add the edit form
-    contentWrapper.innerHTML = "";
+document.querySelectorAll('[id*="post-edit-button"]').forEach(btn => {
+  btn.addEventListener("click", function () {
+    const id = this.getAttribute("data-postId")
+    makeEditAreaVisible(id)
+    // focus the textarea
+    const textArea = document.getElementById(`content-${id}`)
+    textArea.focus()
+    textArea.setSelectionRange(textArea.value.length, textArea.value.length)
+  })
+})
 
-    // add the edit form
-    const form = document.createElement("form");
-    const textArea = document.createElement("textarea");
-    textArea.id = `edit-post-${id}`;
-    form.appendChild(textArea);
-    const submitBtn = document.createElement("button");
-    submitBtn.setAttribute("type", "submit");
-    submitBtn.textContent = "Submit";
-    form.appendChild(submitBtn);
+/**
+ * Edit post form submission entry point
+ */
+document.querySelectorAll('[id*="edit-post-form"]').forEach((form) => {
+  form.addEventListener("submit", async function(e) {
+    e.preventDefault()
+    const id = this.getAttribute("data-postId")
+    const textArea = document.getElementById(`content-${id}`)
+    content = textArea.value
+    // check that the textarea contents are valid
+    if (content.trim() == "") {
+      alert("content must have at least one character")
+      textArea.focus()
+      return
+    }
+    const post = await updatePost(id, content)
+    if (!post) return
+    const postContentElt = document.getElementById(`post-${id}-content`)
+    postContentElt.innerText = post.content
+    textArea.innerText = post.content
 
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const content = document.getElementById(`edit-post-${id}`)?.value;
-      const post = await updatePost(id, content);
-      if (!post) return;
-      contentWrapper.innerHTML = "";
-      const p = document.createElement("p");
-      p.innerText = `said ${post.content}`;
-      contentWrapper.appendChild(p);
-    });
-
-    contentWrapper.appendChild(form);
-    textArea.focus();
-
-    // add the submit button
-  });
+    //TODO change the last updated date - requires backend changes too
+    makeEditAreaVisible(null)
+  })
 });
 
+/**
+ * Helper function to make the editable area viewable on a single element
+ * @param {id} - the id of the post, can also be null to close all edit areas
+ */
+function makeEditAreaVisible(id=null) {
+  document.querySelectorAll('[id*="post-edit-wrapper"]').forEach(elt => {
+    // make editable area visible the post with id passed
+
+    if (elt.id == `post-edit-wrapper-${id}`) {
+      elt.classList.remove("hidden")
+    } else { // make all other hidden
+      elt.classList.add("hidden")
+    }
+  })
+  document.querySelectorAll('[id*="post-content-wrapper"]').forEach(elt => {
+    // make post content hidden for the post with id passed
+    if (elt.id == `post-content-wrapper-${id}`) {
+      elt.classList.add("hidden")
+    } else { // make all others visible
+      elt.classList.remove("hidden")
+    }
+  })
+}
+
+
+ /**
+  * Will send request to update a post's content
+  * @param id {(string|number)} - The post's ID
+  * @param content {string} - The post's content 
+  * @returns {(object|null)} - the post or null if error
+  */
 async function updatePost(id, content) {
   try {
     const response = await fetch(`/api/posts/${id}`, {
@@ -139,6 +173,36 @@ async function updatePost(id, content) {
   } catch (error) {
     console.error(error);
     return null;
+  }
+}
+
+/**
+ * Delete post entry point
+ */
+document.querySelectorAll('[id*="post-delete-button"]').forEach(btn => {
+  btn.addEventListener("click", async function() {
+    const id = this.getAttribute("data-postId")
+    const isDeleted = await deletePost(id)
+    if (isDeleted) return location.reload()
+  })
+})
+
+
+/**
+ * Will send request to delete post - will return true if successful ; else false
+ */
+async function deletePost(id) {
+  try {
+    await fetch(`/api/posts/${id}`,  {
+      method: "DELETE",
+      headers: {
+        "X-CSRFToken": getCookie("csrftoken"),
+      }
+    })
+    return true
+  } catch (error) {
+    console.error(error)
+    return false
   }
 }
 

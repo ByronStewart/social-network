@@ -1,14 +1,26 @@
 <div id="post-list-container">
   {% for post in object_list %}
-  
+
   <div class="border">
     <div class="mb-3">
       <a href="{% url 'profile' post.owner.id %}">{{post.owner}}</a>
       id {{post.id}}
     </div>
+    {% comment %} Post content {% endcomment %}
     <div id="post-content-wrapper-{{post.id}}">
-      <p>said {{post.content}}</p>
+      <p>said <span id="post-{{post.id}}-content">{{post.content}}</span></p>
     </div>
+    {% comment %} Edit area {% endcomment %}
+    {% if user.is_authenticated and post.owner == user %}
+    <div id="post-edit-wrapper-{{post.id}}" class="hidden">
+      <form id="edit-post-form-{{post.id}}" data-postId="{{post.id}}">
+        <textarea required name="content" id="content-{{post.id}}" cols="40" rows="2">{{post.content}}</textarea>
+        <button type="submit">Submit</button>
+        <button id="cancel-edit-{{post.id}}">Cancel</button>
+      </form>
+    </div>
+    {% endif %}
+
     <p>
       like count:
       <span id="post-{{post.id}}-like-count">{{post.like_count}}</span>
@@ -16,19 +28,21 @@
     <p>orginally posted at: {{post.created_at}}</p>
     {% if user.is_authenticated %}
     <button
-    id="like-post-{{post.id}}"
-    data-postId="{{post.id}}"
-    data-likedStatus="{{post.is_liked|lower}}"
+      id="like-post-{{post.id}}"
+      data-postId="{{post.id}}"
+      data-likedStatus="{{post.is_liked|lower}}"
     >
-    {% if post.is_liked %} Unlike {% else %} Like {% endif %}
+      {% if post.is_liked %} Unlike {% else %} Like {% endif %}
     </button>
-    {% endif %}
-    {% if user.is_authenticated %}
-      {% if user == post.owner %}
-        <button id="post-edit-button-{{post.id}}" data-postId="{{post.id}}">Edit</button>
-      {% endif %}
-    {% endif %}
+    {% if user == post.owner %}
+
+    <button id="post-edit-button-{{post.id}}" data-postId="{{post.id}}">
+      Edit
+    </button>
+    <button id="post-delete-button-{{post.id}}" data-postId="{{post.id}}">Delete</button>
+
+    {% endif %} {% endif %}
   </div>
-  
+
   {% endfor %}
 </div>

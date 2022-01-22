@@ -71,20 +71,19 @@ describe("authenticated users", () => {
       });
 
       it.skip("should be able to edit a post", () => {
-        cy.get("#content").type("my first post{enter}");
+        cy.get("#content").type("my first editable post{enter}");
         cy.get("#post-list-container")
           .children()
           .first()
           .contains("my first post");
       });
 
-      it.only("should not be able to edit another users posts", () => {
+      it("should not be able to edit another users posts", () => {
         cy.get("#content").type("my first post{enter}");
         cy.get("#post-list-container")
           .children()
           .first()
           .contains("my first post");
-        cy.pause()
         cy.login("alice", "alice");
         cy.visit("/");
         cy.get("#post-list-container")

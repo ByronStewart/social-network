@@ -103,6 +103,8 @@ class PostRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     permission_classes = [IsOwnerOrReadOnly]
 
 
+
+
 class PostFollowedAPIView(ListAPIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = PostSerializer
