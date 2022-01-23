@@ -1,31 +1,13 @@
-{% extends "network/layout.html" %} {% load static %} {% block body %} 
+{% extends "network/layout.html" %} {% load static %} 
+{% block body %} 
 {% if user.is_authenticated %}
-<div class="pt-16 pb-5 bg-slate-100">
-  <div class="mx-auto max-w-xl">
-    <h3 class="text-center text-3xl font-bold mb-4">What are you thinking?</h3>
-    <form action="{% url 'posts' %}" method="post">
-      {% csrf_token %}
-      <div class="flex">
-        <textarea
-          class="p-2 border-slate-700 border-l border-y rounded-tl-md rounded-bl-md w-full resize-none focus:outline-none focus:border-slate-900 focus:shadow-md"
-          type="text"
-          name="content"
-          id="content"
-          rows="3"
-          required
-          autofocus
-        ></textarea>
-        <button
-          class="bg-slate-500 hover:bg-slate-400 text-white px-4 rounded-tr-md rounded-br-md"
-          type="submit"
-        >
-          Post
-        </button>
-      </div>
-    </form>
-  </div>
-</div>
+  {% include "network/components/new_post_form.html" %}
 {% endif %}
-<div class="mt-5">{% include "network/components/post_list.html" %}</div>
-{% include "network/components/paginator.html" %} {% endblock %} 
+<div class="mt-5">
+  {% include "network/components/post_list.html" %}
+</div>
+<div class="mb-3">
+  {% include "network/components/paginator.html" %} 
+</div>
+{% endblock %} 
 

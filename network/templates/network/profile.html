@@ -1,5 +1,8 @@
 {% extends "network/layout.html" %}
 
+{% block title %}
+{{object.username}}'s profile
+{% endblock title %}
 {% block body %}
 <h1>Profile Page</h1>
 
@@ -18,8 +21,6 @@
     {% endif %}
   </div>
 </div>
-
-{% comment %} End Profile Component {% endcomment %}
 
 {% include "network/components/post_list.html" %}
 {% include "network/components/paginator.html" %}

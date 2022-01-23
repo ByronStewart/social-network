@@ -31,7 +31,8 @@ describe("authenticated users", () => {
       });
 
       it("should be able to create a post", () => {
-        cy.get("#content").type("my first post{enter}");
+        cy.get("#content").type("my first post")
+        cy.get('#new-post-form').submit()
         cy.get("#post-list-container")
           .children()
           .first()
@@ -41,8 +42,9 @@ describe("authenticated users", () => {
 
       it("should not be able to create an empty post", () => {
         cy.intercept(/api\/posts\/\d+\/like/).as("like");
-        cy.get("#content").type("   ");
-        cy.get("input:invalid").should("have.length", 1);
+        cy.get("#content").type("   ")
+        cy.get('#new-post-form').submit();
+        cy.get("#modal").should("be.visible");
       });
 
       it("should be able to like a post", () => {
@@ -73,7 +75,8 @@ describe("authenticated users", () => {
 
       it("should be able to delete a post", () => {
         const postText = faker.lorem.sentence()
-        cy.get("#content").type(`${postText}{enter}`);
+        cy.get("#content").type(postText);
+        cy.get('#new-post-form').submit()
         cy.get("#post-list-container")
           .children()
           .first()
@@ -86,7 +89,8 @@ describe("authenticated users", () => {
 
       it("should not be able to delete another users posts", () => {
         const postText = faker.lorem.sentence()
-        cy.get("#content").type(`${postText}{enter}`);
+        cy.get("#content").type(postText)
+        cy.get('#new-post-form').submit();
         cy.get("#post-list-container")
           .children()
           .first()
@@ -107,7 +111,8 @@ describe("authenticated users", () => {
         beforeEach(() => {
           cy.login('joe', 'joe')
           cy.visit("/")
-          cy.get("#content").type("my first editable post{enter}");
+          cy.get("#content").type("my first editable post")
+          cy.get('#new-post-form').submit();
           cy.get("#post-list-container")
             .children()
             .first()
@@ -128,7 +133,7 @@ describe("authenticated users", () => {
           });
         });
 
-        it("should not be able to create an empty post", () => {
+        it("should not be able to update to an empty post", () => {
           cy.get('@post').within($=> {
             cy.get('[id*="post-edit-button"]').click();
             cy.get("textarea").type("{enter}")
@@ -147,7 +152,8 @@ describe("authenticated users", () => {
       });
 
       it("should not be able to edit another users posts", () => {
-        cy.get("#content").type("my first post{enter}");
+        cy.get("#content").type("my first post")
+        cy.get('#new-post-form').submit();
         cy.get("#post-list-container")
           .children()
           .first()

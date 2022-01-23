@@ -1,4 +1,17 @@
 /**
+ * New post form submission
+ */
+document.getElementById("new-post-form")?.addEventListener("submit", async function(e) {
+  const textArea = document.getElementById("content")
+  const content = textArea.value
+  if (content.trim() == "") {
+    e.preventDefault()
+    showModal("content must have at least one character")
+    return
+  }
+})
+
+/**
  * Like post entry point
  */
 document.querySelectorAll('[id*="like-post"]').forEach((elt) => {
@@ -86,6 +99,33 @@ async function followUser(id, isFollowed) {
   }
 }
 
+/**
+ * Show the modal
+ * @param {string} message - the message to send
+ */
+function showModal(message) {
+  document.getElementById("modal-message").innerText = message
+  const modal = document.getElementById("modal")
+  modal.classList.remove("hidden")
+  modal.classList.add("fixed")
+  document.getElementById("close-modal-button").focus()
+}
+/**
+ * Event listener to close the modal
+ */
+document.getElementById("modal")?.addEventListener("click", closeModal)
+document.getElementById("modal-button")?.addEventListener("click", closeModal)
+
+/**
+ * Close the modal
+ * @param {Event} event
+ */
+function closeModal(event) {
+  event.stopPropagation()
+  const modal = document.getElementById("modal")
+  modal.classList.remove("fixed")
+  modal.classList.add("hidden")
+}
 
 /**
  * Toggle editing of post entry point
@@ -127,8 +167,7 @@ document.querySelectorAll('[id*="edit-post-form"]').forEach((form) => {
     content = textArea.value
     // check that the textarea contents are valid
     if (content.trim() == "") {
-      alert("content must have at least one character")
-      textArea.focus()
+      showModal("content must have at least one character")
       return
     }
     const post = await updatePost(id, content)

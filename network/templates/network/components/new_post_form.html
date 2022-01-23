@@ -1,0 +1,25 @@
+
+<div class="pt-16 pb-5 bg-slate-100">
+  <div class="mx-auto max-w-xl">
+    <h3 class="text-center text-3xl font-bold mb-4">What are you thinking?</h3>
+    <form action="{% url 'posts' %}" method="post" id="new-post-form">
+      {% csrf_token %}
+      <div class="flex">
+        <textarea
+          class="p-2 peer border-slate-700 border-l border-y rounded-tl-md rounded-bl-md w-full resize-none focus:outline-none focus:border-slate-900 focus:shadow-md"
+          type="text"
+          name="content"
+          id="content"
+          rows="3"
+          autofocus
+        ></textarea>
+        <button
+          class="peer-focus:shadow-md bg-slate-500 hover:bg-slate-400 text-white px-4 rounded-tr-md rounded-br-md"
+          type="submit"
+        >
+          Post
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
