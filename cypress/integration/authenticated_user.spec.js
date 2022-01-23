@@ -1,4 +1,5 @@
 /// <reference types="cypress" />
+import faker from 'faker'
 
 describe("authenticated users", () => {
   context("authentication", () => {
@@ -70,12 +71,79 @@ describe("authenticated users", () => {
           });
       });
 
-      it.skip("should be able to edit a post", () => {
-        cy.get("#content").type("my first editable post{enter}");
+      it("should be able to delete a post", () => {
+        const postText = faker.lorem.sentence()
+        cy.get("#content").type(`${postText}{enter}`);
         cy.get("#post-list-container")
           .children()
           .first()
-          .contains("my first post");
+          .should("contain", postText)
+          .within($=> {
+            cy.get('[id*="post-delete"]').click()
+          })
+        cy.contains(postText).should("not.exist")
+      })
+
+      it("should not be able to delete another users posts", () => {
+        const postText = faker.lorem.sentence()
+        cy.get("#content").type(`${postText}{enter}`);
+        cy.get("#post-list-container")
+          .children()
+          .first()
+          .should("contain", postText)
+
+        cy.login("alice", "alice")
+        cy.visit("/")
+        cy.get("#post-list-container")
+          .children()
+          .first()
+          .should("contain", postText)
+          .within($=> {
+            cy.get('[id*="post-delete"]').should("not.exist")
+          })
+      })
+
+      context("should be able to edit a post", () => {
+        beforeEach(() => {
+          cy.login('joe', 'joe')
+          cy.visit("/")
+          cy.get("#content").type("my first editable post{enter}");
+          cy.get("#post-list-container")
+            .children()
+            .first()
+            .should("contain", "my first editable post")
+            .as("post");
+        });
+
+        it("should be able to edit a post", () => {
+          cy.get('@post').within(($) => {
+            cy.get("textarea").should("not.be.visible");
+            cy.get('[id*="post-edit-button"]').click();
+            cy.get("textarea").should("be.visible").clear().type("can edit a post");
+            cy.get('[type="submit"]').click();
+            // the post content should update to the new value
+            cy.get('[id$="-content"]')
+              .should("be.visible")
+              .and("have.text", "can edit a post");
+          });
+        });
+
+        it("should not be able to create an empty post", () => {
+          cy.get('@post').within($=> {
+            cy.get('[id*="post-edit-button"]').click();
+            cy.get("textarea").type("{enter}")
+            cy.get('[id$="-content"]')
+              .should("not.be.visible")
+              .and("not.contain", /^$/)
+
+            cy.get("textarea").clear().type("     \n    \n   ")
+            cy.get('[type="submit"]').click()
+            cy.get('[id$="-content"]')
+              .should("not.be.visible")
+              .invoke('text')
+              .should("not.match", /^[\s\n]*$/)
+          })
+        })
       });
 
       it("should not be able to edit another users posts", () => {
@@ -104,9 +172,12 @@ describe("authenticated users", () => {
           .should("exist")
           .click()
           .then(($btn) => {
-            const toFollow = $btn.attr("data-followed-status") == "true" ? true : false
+            const toFollow =
+              $btn.attr("data-followed-status") == "true" ? true : false;
             const countAfter = parseInt($count.text());
-            expect(countAfter).to.equal(toFollow ? countBefore + 1 : countBefore - 1);
+            expect(countAfter).to.equal(
+              toFollow ? countBefore + 1 : countBefore - 1
+            );
           });
       });
     });
@@ -129,5 +200,5 @@ describe("authenticated users", () => {
       cy.visit("/users/4/profile");
       cy.get("#post-list-container").should("have.length.at.most", 10);
     });
-  })
+  });
 });

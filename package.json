@@ -24,6 +24,7 @@
     "@testing-library/cypress": "^7.0.6",
     "concurrently": "^7.0.0",
     "cypress": "^7.7.0",
+    "faker": "^5.5.3",
     "lodash": "^4.17.21",
     "sass": "^1.32.12"
   }
