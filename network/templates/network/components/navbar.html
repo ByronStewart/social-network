@@ -1,0 +1,30 @@
+    <nav class="bg-slate-400">
+        <ul class="flex ">
+          <li class=" px-4 pt-3 pb-4 hover:bg-slate-300 cursor-pointer ">
+            <a class="font-semibold" href="{% url 'index' %}">🏠 Network</a>
+          </li>
+          {% if user.is_authenticated %}
+          <li class="  px-4 pt-3 pb-4 hover:bg-slate-300 cursor-pointer ">
+            <a href={% url 'profile' user.pk %}>💩 {{ user.username }}</a>
+          </li>
+          {% endif %}
+          <li class="  px-4 pt-3 pb-4 hover:bg-slate-300 cursor-pointer ">
+            <a class="nav-link" href="{% url 'index' %}">📨 All Posts</a>
+          </li>
+          {% if user.is_authenticated %}
+          <li class="  px-4 pt-3 pb-4 hover:bg-slate-300 cursor-pointer ">
+            <a class="nav-link" href="{% url 'following' %}">😻 Following</a>
+          </li>
+          <li class="  px-4 pt-3 pb-4 hover:bg-slate-300 cursor-pointer ">
+            <a class="nav-link" href="{% url 'logout' %}">Log Out</a>
+          </li>
+          {% else %}
+          <li class="  px-4 pt-3 pb-4 hover:bg-slate-300 cursor-pointer ">
+            <a class="nav-link" href="{% url 'login' %}">Log In</a>
+          </li>
+          <li class="  px-4 pt-3 pb-4 hover:bg-slate-300 cursor-pointer ">
+            <a class="nav-link" href="{% url 'register' %}">Register</a>
+          </li>
+          {% endif %}
+        </ul>
+    </nav>

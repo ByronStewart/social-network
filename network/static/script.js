@@ -13,7 +13,7 @@ document.querySelectorAll('[id*="like-post"]').forEach((elt) => {
     this.setAttribute("data-likedStatus", post.is_liked);
 
     // style the element based on is_liked
-    this.innerText = post.is_liked ? "unlike" : "like";
+    this.innerText = post.is_liked ? "❤" : "🤍";
 
     // update the like count
     document.getElementById(`post-${id}-like-count`).innerText =
@@ -107,7 +107,6 @@ document.querySelectorAll('[id*="post-edit-button"]').forEach(btn => {
 document.querySelectorAll('[id*="cancel-edit"]').forEach(btn => {
   btn.addEventListener("click", function () {
     // reset the text area value to the post content
-    debugger
     const id = this.getAttribute("data-postId")
     const content = document.getElementById(`post-${id}-content`).innerText
     const textArea = document.getElementById(`content-${id}`)

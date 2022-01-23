@@ -1,49 +1,66 @@
-<div id="post-list-container">
+<div id="post-list-container" class="max-w-xl mx-auto">
   {% for post in object_list %}
-
-  <div class="border">
-    <div class="mb-3">
-      <a href="{% url 'profile' post.owner.id %}">{{post.owner}}</a>
-      id {{post.id}}
-    </div>
-    {% comment %} Post content {% endcomment %}
-    <div id="post-content-wrapper-{{post.id}}">
-      <p>said <span id="post-{{post.id}}-content">{{post.content}}</span></p>
-    </div>
-    {% comment %} Edit area {% endcomment %}
-    {% if user.is_authenticated and post.owner == user %}
-    <div id="post-edit-wrapper-{{post.id}}" class="hidden">
-      <form id="edit-post-form-{{post.id}}" data-postId="{{post.id}}">
-        <textarea required name="content" id="content-{{post.id}}" cols="40" rows="2">{{post.content}}</textarea>
-        <input type="submit" value="Submit">
-        <button id="cancel-edit-{{post.id}}" data-postId="{{post.id}}">Cancel</button>
-      </form>
-      
+  <div class="py-3 pl-4 pr-12 relative bg-white rounded-md mb-2 shadow-lg">
+    {% comment %} Edit and delete buttons {% endcomment %}
+    {% if user.is_authenticated and user == post.owner %}
+    <div class="absolute right-0 inset-y-0 flex flex-col justify-between align-items-end">
+      <button class="p-3 hover:bg-red-100 rounded-bl-md active:bg-red-200" id="post-delete-button-{{post.id}}" data-postId="{{post.id}}">❌</button>
+      <button class="p-3 hover:bg-orange-100 rounded-tl-md active:bg-orange-200" id="post-edit-button-{{post.id}}" data-postId="{{post.id}}">✒</button>
     </div>
     {% endif %}
+    {% comment %} Post content {% endcomment %}
+    <div>
 
-    <p>
-      like count:
-      <span id="post-{{post.id}}-like-count">{{post.like_count}}</span>
-    </p>
-    <p>originally posted at: {{post.created_at}}</p>
-    {% if user.is_authenticated %}
-    <button
-      id="like-post-{{post.id}}"
-      data-postId="{{post.id}}"
-      data-likedStatus="{{post.is_liked|lower}}"
-    >
-      {% if post.is_liked %} Unlike {% else %} Like {% endif %}
-    </button>
-    {% if user == post.owner %}
+      <h5 class="mb-1">
+        <a class="text-lg font-bold text-blue-900 underline underline-offset-1 font-serif" href="{% url 'profile' post.owner.id %}">{{post.owner}}</a>
+        <span class="font-semibold"> posted: </span>
+      </h5>
+      
+      {% comment %} Post content main area {% endcomment %}
+      <p class="mb-4 font" id="post-content-wrapper-{{post.id}}">
+        <span id="post-{{post.id}}-content">{{post.content}}</span>
+      </p>
 
-    <button id="post-edit-button-{{post.id}}" data-postId="{{post.id}}">
-      Edit
-    </button>
-    <button id="post-delete-button-{{post.id}}" data-postId="{{post.id}}">Delete</button>
+      {% comment %} Edit area {% endcomment %}
+      {% if user.is_authenticated and post.owner == user %}
+      <div class="hidden" id="post-edit-wrapper-{{post.id}}">
+        <form id="edit-post-form-{{post.id}}" data-postId="{{post.id}}">
+          <textarea required name="content" id="content-{{post.id}}" cols="40" rows="2">{{post.content}}</textarea>
+          <input type="submit" value="Submit">
+          <button id="cancel-edit-{{post.id}}" data-postId="{{post.id}}">Cancel</button>
+        </form>
+      </div>
+      {% endif %}
+      <button
+        
+      >
+        
+      </button>
 
-    {% endif %} {% endif %}
+      <div class="flex justify-between">
+        <div>
+          <button 
+            id="like-post-{{post.id}}"
+            data-postId="{{post.id}}"
+            data-likedStatus="{{post.is_liked|lower}}" 
+            class="text-lg hover:text-opacity-60
+            "
+          >{% if post.is_liked %} ❤ {% else %} 🤍 {% endif %}
+        </button>
+          <span id="post-{{post.id}}-like-count">{{post.like_count}}</span>
+        </div>
+        <p class="text-muted text-sm">posted at: {{post.created_at}}</p>
+      </div>
+      {% if user.is_authenticated %}
+      
+      {% comment %} {% if user == post.owner %}
+      <button id="post-edit-button-{{post.id}}" data-postId="{{post.id}}">
+        Edit
+      </button>
+      <button id="post-delete-button-{{post.id}}" data-postId="{{post.id}}">Delete</button>
+      {% endif %} {% endcomment %}
+      {% endif %}
+    </div>
   </div>
-
   {% endfor %}
 </div>
