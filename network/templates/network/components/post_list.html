@@ -52,7 +52,7 @@
           >{% if post.is_liked %} ❤ {% else %} 🤍 {% endif %}
           </button>
           {% else %}
-          <div class="inline-block text-lg py-3 pl-3">🤍</div>
+          <div class="inline-block text-lg py-3 pl-3 cursor-default">🤍</div>
           {% endif %}
           <span id="post-{{post.id}}-like-count">{{post.like_count}}</span>
         </div>

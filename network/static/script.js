@@ -6,7 +6,7 @@ document.getElementById("new-post-form")?.addEventListener("submit", async funct
   const content = textArea.value
   if (content.trim() == "") {
     e.preventDefault()
-    showModal("content must have at least one character")
+    showModal("Error", "⚠ Post must have at least one character")
     return
   }
 })
@@ -101,10 +101,12 @@ async function followUser(id, isFollowed) {
 
 /**
  * Show the modal
+ * @param {string} heading - the modal header
  * @param {string} message - the message to send
  */
-function showModal(message) {
+function showModal(heading, message) {
   document.getElementById("modal-message").innerText = message
+  document.getElementById("modal-header").innerText = heading
   const modal = document.getElementById("modal")
   modal.classList.remove("hidden")
   modal.classList.add("fixed")
@@ -165,7 +167,7 @@ document.querySelectorAll('[id*="edit-post-form"]').forEach((form) => {
     content = textArea.value
     // check that the textarea contents are valid
     if (content.trim() == "") {
-      showModal("content must have at least one character")
+      showModal("Error","⚠ Posts must at least one character")
       return
     }
     const post = await updatePost(id, content)
