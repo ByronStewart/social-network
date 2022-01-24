@@ -133,28 +133,26 @@ function closeModal(event) {
 document.querySelectorAll('[id*="post-edit-button"]').forEach(btn => {
   btn.addEventListener("click", function () {
     const id = this.getAttribute("data-postId")
-    makeEditAreaVisible(id)
-    // focus the textarea
     const textArea = document.getElementById(`content-${id}`)
-    textArea.focus()
-    textArea.setSelectionRange(textArea.value.length, textArea.value.length)
+    const textAreaWrapper = document.getElementById(`post-edit-wrapper-${id}`)
+
+    // toggle edit on
+    if (textAreaWrapper.classList.contains("hidden")) { 
+      this.classList.add("bg-orange-100", 'hover:bg-orange-200')
+      makeEditAreaVisible(id)
+      textArea.focus()
+      textArea.setSelectionRange(textArea.value.length, textArea.value.length)
+
+    } else {// toggle edit off
+      const content = document.getElementById(`post-${id}-content`).innerText
+      const textArea = document.getElementById(`content-${id}`)
+      textArea.value = content
+      makeEditAreaVisible(null)
+      this.classList.remove("bg-orange-100", 'hover:bg-orange-200')
+      return
+    }
   })
 })
-
-/**
- * Cancel the form submission entry point
- */
-document.querySelectorAll('[id*="cancel-edit"]').forEach(btn => {
-  btn.addEventListener("click", function () {
-    // reset the text area value to the post content
-    const id = this.getAttribute("data-postId")
-    const content = document.getElementById(`post-${id}-content`).innerText
-    const textArea = document.getElementById(`content-${id}`)
-    textArea.value = content
-    makeEditAreaVisible(null)    
-  })
-})
-
 
 /**
  * Edit post form submission entry point

@@ -30,7 +30,6 @@ class UserSerializer(serializers.ModelSerializer):
 
     def get_is_followed(self, instance):
         request = self.context.get('request', None)
-
         if request is None:
             return False
         if not request.user.is_authenticated:
