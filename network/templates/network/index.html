@@ -2,6 +2,13 @@
 {% block body %} 
 {% if user.is_authenticated %}
   {% include "network/components/new_post_form.html" %}
+{% else %}
+<div class="bg-slate-100 pt-14 pb-5 mb-5">
+  <div class="mx-auto max-w-xl">
+    <h1 class="text-3xl font-bold text-center">Network</h1>
+    <p class="text-md font-extralight italic text-center">the best social media platform</p>
+  </div>
+</div>
 {% endif %}
 <div class="mt-5">
   {% include "network/components/post_list.html" %}
