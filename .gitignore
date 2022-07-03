@@ -14,6 +14,8 @@ media
 *.bak 
 
 .coverage
+htmlcov
+
 
 # Cypress #
 cypress/videos
