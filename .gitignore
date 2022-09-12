@@ -24,3 +24,5 @@ cypress/downloads
 
 # secrets
 etc
+.env
+staticfiles

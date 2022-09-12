@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "social-network"
+version = "0.1.0"
+description = ""
+authors = ["Byron Stewart <byronstewart22@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+packages = [{include = "social_network"}]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+django = "3.2.7"
+djangorestframework = "^3.13.1"
+gunicorn = "^20.1.0"
+python-dotenv = "^0.21.0"
+psycopg2-binary = "^2.9.3"
+dj-database-url = "^1.0.0"
+
+[tool.poetry.group.dev.dependencies]
+mixer = "^7.2.2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
