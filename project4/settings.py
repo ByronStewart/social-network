@@ -14,6 +14,7 @@ import os
 import dj_database_url
 from dotenv import load_dotenv
 load_dotenv()
+print('but it works on my local machine!')
 
 LOGIN_URL = "/login/"
 
