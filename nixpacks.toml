@@ -1,5 +1,0 @@
-[phases.setup]
-nixPkgs = ['python38', 'gcc']
-
-[phases.install]
-cmds = ['pip install -r requirements.txt']
