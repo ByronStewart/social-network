@@ -14,9 +14,7 @@ import os
 import dj_database_url
 from dotenv import load_dotenv
 load_dotenv()
-if dj_database_url:
-    print('lib loaded')
-print(os.environ.get("PG_CONN"))
+
 
 LOGIN_URL = "/login/"
 
