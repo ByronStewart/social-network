@@ -623,6 +623,10 @@ Ensure the default browser behavior of the `hidden` attribute.
   max-width: 65ch;
 }
 
+.max-w-2xl {
+  max-width: 42rem;
+}
+
 .flex-grow {
   flex-grow: 1;
 }

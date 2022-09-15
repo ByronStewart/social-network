@@ -33,8 +33,9 @@ DEBUG = True if os.environ.get('RUNNING_ENV', default="production") == 'dev' els
 
 ALLOWED_HOSTS = [os.environ.get("ALLOWED_HOST")]
 
-CSRF_TRUSTED_ORIGINS=[os.environ.get("CSRF_TRUSTED_ORIGINS")]
-CSRF_COOKIE_DOMAIN = ".railway.app"
+if "CSRF_TRUSTED_ORIGINS" in os.environ:
+    CSRF_TRUSTED_ORIGINS=[os.environ.get("CSRF_TRUSTED_ORIGINS")]
+    CSRF_COOKIE_DOMAIN = ".railway.app"
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
